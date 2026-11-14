@@ -110,9 +110,10 @@ jobs:
           import json
           r = json.load(open('/tmp/r.json'))
           assert r['encontrados'] >= 1, r
-          assert r['origen'] == 'http://api:8080', r['origen']
+          assert r['origen'] == 'ids', r['origen']
+          assert r['modelo'] and r['modelo']['huella_datos'], r
           assert all(0 <= x['probabilidad'] <= 1 for x in r['resultados']), r
-          lineas = [f"origen {r['origen']} | pedidos {r['pedidos']} | encontrados {r['encontrados']}"]
+          lineas = [f"origen {r['origen']} | pedidos {r['pedidos']} | encontrados {r['encontrados']} | modelo {r['modelo']['modelo']} v{r['modelo']['version_modelo']}"]
           lineas += [f"lote {x['lote_id']}: probabilidad {x['probabilidad']} -> {x['segmento']}" for x in r['resultados']]
           open('/tmp/s/3-recomendar.txt', 'w', encoding='utf-8').write('\n'.join(lineas) + '\n')
           print('\n'.join(lineas))
