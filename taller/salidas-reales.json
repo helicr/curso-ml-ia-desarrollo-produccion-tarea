@@ -1,0 +1,456 @@
+{
+ "meta": {
+  "nota": "Salidas reales de los pasos del alumno SIN Docker, ejecutadas en una carpeta temporal limpia (<taller> = raiz del proyecto). Se quitaron duraciones y fechas. API e interfaz se ejecutaron en puertos libres; se muestran como 8080 y 8090. Las comparaciones usan la referencia models/referencia.json sin modificarla (la tolerancia 0,10 se pasa por parametro). Las variables TALLER_* apuntan a la carpeta temporal.",
+  "python": "3.11.18",
+  "sistema": "Windows",
+  "orden_de_los_pasos": "ver el campo «orden» de cada paso"
+ },
+ "pasos": {
+  "verificar_entorno": {
+   "orden": 1,
+   "comando": "python -m cafe_mlops.verificar",
+   "codigo": 1,
+   "salida": [
+    "[OK   ] python     Python 3.11.18",
+    "[OK   ] paquetes   11 paquetes con la versión exacta de requirements-dev.txt",
+    "[OK   ] cafe_mlops cafe_mlops se importa (API incluida)",
+    "[OK   ] datos      2 CSV con la huella SHA-256 de SHA256SUMS",
+    "[FALLA] docker     docker no está instalado o no está en el PATH (en el Codespace lo trae el devcontainer)",
+    "FALTA: docker. Arregla lo marcado como FALLA y vuelve a ejecutar: python -m cafe_mlops.verificar"
+   ],
+   "tipo": "terminal"
+  },
+  "pipeline_hasta_2016": {
+   "orden": 2,
+   "comando": "python -m cafe_mlops.pipeline --hasta 2016",
+   "codigo": 0,
+   "salida": [
+    "[operacional] creando cqi.db con catas hasta 2016 (todavía no existe); es la simulación del laboratorio, no un pipeline",
+    "  OPERACIONAL: catas hasta 2016 (versión 1 de los datos)",
+    "  OPERACIONAL: paises                35 filas",
+    "  OPERACIONAL: entidades             26 filas",
+    "  OPERACIONAL: productores          621 filas",
+    "  OPERACIONAL: lotes              1,190 filas",
+    "  OPERACIONAL: analisis_verde     1,190 filas",
+    "  OPERACIONAL: catas              1,190 filas",
+    "  OPERACIONAL: notas_cata        11,900 filas",
+    "[pipeline_ingesta_raw] ejecutando (huella de entrada 7379031448d0)",
+    "  RAW: raw_paises                35 filas",
+    "  RAW: raw_entidades             26 filas",
+    "  RAW: raw_productores          621 filas",
+    "  RAW: raw_lotes              1,190 filas",
+    "  RAW: raw_analisis_verde     1,190 filas",
+    "  RAW: raw_catas              1,190 filas",
+    "  RAW: raw_notas_cata        11,900 filas",
+    "[pipeline_ingesta_master] ejecutando (huella de entrada 383d741d7a61)",
+    "  MASTER: master_lotes          1,190 filas",
+    "  MASTER: master_descartes          0 filas",
+    "  MASTER: calidad: 17 reglas, 3 alertas (R06, R07, R10)",
+    "[pipeline_ml] ejecutando (huella de entrada 0bca8b260914)",
+    "  FS: fs_lote 1,190 lotes, 10 variables (catálogo: 10)",
+    "  ML: train    866 lotes (2010-2014) | especialidad 714 (82.4 %) | no 152",
+    "  ML: valid    197 lotes (2015-2015) | especialidad 185 (93.9 %) | no 12",
+    "  ML: test     127 lotes (2016-2016) | especialidad 122 (96.1 %) | no 5",
+    "[pipeline_train] ejecutando (huella de entrada d07e66a45b41)",
+    "  Datos: huella c83699881a8880b9, catas hasta 2016 (versión 1 de los datos). Comprobación temporal OK: train 2010-2014 < valid 2015-2015 < test 2016-2016",
+    "    train   866 lotes | 152 sin especialidad (17.6 %)",
+    "    valid   197 lotes |  12 sin especialidad (6.1 %)",
+    "    test    127 lotes |   5 sin especialidad (3.9 %)",
+    "  referencia_sin_aprender  AUC valid 0.500 [0.50; 0.50] | test 0.500 [0.50; 0.50] | AP(<80) test 0.039 (azar 0.039) | ventana común 2016-2016 AUC 0.500 [0.50; 0.50]",
+    "  regresion_logistica      AUC valid 0.572 [0.41; 0.73] | test 0.752 [0.54; 0.91] | AP(<80) test 0.114 (azar 0.039) | ventana común 2016-2016 AUC 0.752 [0.54; 0.91]",
+    "  gradient_boosting        AUC valid 0.712 [0.55; 0.86] | test 0.852 [0.71; 1.00] | AP(<80) test 0.470 (azar 0.039) | ventana común 2016-2016 AUC 0.852 [0.71; 1.00]",
+    "  Evaluación SECUNDARIA (informativa): ventana creciente, varios cortes agrupados",
+    "    referencia_sin_aprender  seleccion n=417 sin-especialidad=64 AUC 0.483 [0.42; 0.55] | examen n=324 sin-especialidad=17 AUC 0.552 [0.44; 0.65]",
+    "    regresion_logistica      seleccion n=417 sin-especialidad=64 AUC 0.688 [0.62; 0.75] | examen n=324 sin-especialidad=17 AUC 0.617 [0.47; 0.75]",
+    "    gradient_boosting        seleccion n=417 sin-especialidad=64 AUC 0.743 [0.68; 0.80] | examen n=324 sin-especialidad=17 AUC 0.736 [0.61; 0.85]",
+    "    contraste, gradient_boosting con validación cruzada ALEATORIA sobre las mismas filas (741): AUC 0.767 (optimista: mezcla pasado y futuro)",
+    "  AVISO DE RUIDO: valid tiene 12 lotes < 80 y test 5 (la ventana común, 5). Un test único oscila: AUC test 0.852 con IC95 % [0.71; 1.00]. Diferencias de ~0,03 entre modelos no significan nada; no concluyas con una sola cifra (mira también la evaluación agrupada).",
+    "  exactitud de test del elegido 0.961 frente a 0.961 de «decir siempre especialidad»: la exactitud no distingue; se usa AUC y precisión media de la clase < 80.",
+    "  Mejor modelo: gradient_boosting. Guardado en models/modelo.joblib",
+    "  Registrado en MLflow como «cafe-especialidad», versión 1. Para verlo: python -m cafe_mlops.mlflow_ui",
+    "Resumen: ingesta_raw: ejecutado · ingesta_master: ejecutado · ml: ejecutado · train: ejecutado"
+   ],
+   "tipo": "terminal"
+  },
+  "pipeline_segunda_ejecucion": {
+   "orden": 3,
+   "comando": "python -m cafe_mlops.pipeline --hasta 2016",
+   "codigo": 0,
+   "salida": [
+    "[pipeline_ingesta_raw] sin cambios: la entrada es la misma que en la ultima ejecucion (7379031448d0). Usa --forzar para rehacerlo.",
+    "[pipeline_ingesta_master] sin cambios: la entrada es la misma que en la ultima ejecucion (383d741d7a61). Usa --forzar para rehacerlo.",
+    "[pipeline_ml] sin cambios: la entrada es la misma que en la ultima ejecucion (0bca8b260914). Usa --forzar para rehacerlo.",
+    "[pipeline_train] sin cambios: la entrada es la misma que en la ultima ejecucion (d07e66a45b41). Usa --forzar para rehacerlo.",
+    "Resumen: ingesta_raw: sin cambios · ingesta_master: sin cambios · ml: sin cambios · train: sin cambios"
+   ],
+   "tipo": "terminal"
+  },
+  "pipeline_hasta_2018": {
+   "orden": 4,
+   "comando": "python -m cafe_mlops.pipeline --hasta 2018",
+   "codigo": 0,
+   "salida": [
+    "[operacional] creando cqi.db con catas hasta 2018 (tenía catas hasta 2016); es la simulación del laboratorio, no un pipeline",
+    "  OPERACIONAL: catas hasta 2018 (versión 2 de los datos)",
+    "  OPERACIONAL: paises                36 filas",
+    "  OPERACIONAL: entidades             27 filas",
+    "  OPERACIONAL: productores          693 filas",
+    "  OPERACIONAL: lotes              1,339 filas",
+    "  OPERACIONAL: analisis_verde     1,339 filas",
+    "  OPERACIONAL: catas              1,339 filas",
+    "  OPERACIONAL: notas_cata        13,390 filas",
+    "[pipeline_ingesta_raw] ejecutando (huella de entrada 781cc212dd45)",
+    "  RAW: raw_paises                36 filas",
+    "  RAW: raw_entidades             27 filas",
+    "  RAW: raw_productores          693 filas",
+    "  RAW: raw_lotes              1,339 filas",
+    "  RAW: raw_analisis_verde     1,339 filas",
+    "  RAW: raw_catas              1,339 filas",
+    "  RAW: raw_notas_cata        13,390 filas",
+    "[pipeline_ingesta_master] ejecutando (huella de entrada fa2f0eab9fd1)",
+    "  MASTER: master_lotes          1,338 filas",
+    "  MASTER: master_descartes          1 filas",
+    "  MASTER: calidad: 17 reglas, 4 alertas (R06, R07, R09, R10)",
+    "[pipeline_ml] ejecutando (huella de entrada 6145dbeeafe3)",
+    "  FS: fs_lote 1,338 lotes, 10 variables (catálogo: 10)",
+    "  ML: train  1,063 lotes (2010-2015) | especialidad 899 (84.6 %) | no 164",
+    "  ML: valid    127 lotes (2016-2016) | especialidad 122 (96.1 %) | no 5",
+    "  ML: test     148 lotes (2017-2018) | especialidad 131 (88.5 %) | no 17",
+    "[pipeline_train] ejecutando (huella de entrada 7f6ccf31b959)",
+    "  Datos: huella bebc87b9eddf0199, catas hasta 2018 (versión 2 de los datos). Comprobación temporal OK: train 2010-2015 < valid 2016-2016 < test 2017-2018",
+    "    train  1063 lotes | 164 sin especialidad (15.4 %)",
+    "    valid   127 lotes |   5 sin especialidad (3.9 %)",
+    "    test    148 lotes |  17 sin especialidad (11.5 %)",
+    "  referencia_sin_aprender  AUC valid 0.500 [0.50; 0.50] | test 0.500 [0.50; 0.50] | AP(<80) test 0.115 (azar 0.115) | ventana común 2016-2016 AUC 0.500 [0.50; 0.50]",
+    "  regresion_logistica      AUC valid 0.733 [0.49; 0.98] | test 0.669 [0.53; 0.80] | AP(<80) test 0.265 (azar 0.115) | ventana común 2016-2016 AUC 0.733 [0.49; 0.98]",
+    "  gradient_boosting        AUC valid 0.795 [0.60; 1.00] | test 0.652 [0.49; 0.78] | AP(<80) test 0.249 (azar 0.115) | ventana común 2016-2016 AUC 0.795 [0.60; 1.00]",
+    "  Evaluación SECUNDARIA (informativa): ventana creciente, varios cortes agrupados",
+    "    referencia_sin_aprender  seleccion n=417 sin-especialidad=64 AUC 0.483 [0.42; 0.55] | examen n=472 sin-especialidad=34 AUC 0.418 [0.32; 0.51]",
+    "    regresion_logistica      seleccion n=417 sin-especialidad=64 AUC 0.688 [0.62; 0.75] | examen n=472 sin-especialidad=34 AUC 0.615 [0.53; 0.69]",
+    "    gradient_boosting        seleccion n=417 sin-especialidad=64 AUC 0.743 [0.68; 0.80] | examen n=472 sin-especialidad=34 AUC 0.682 [0.60; 0.77]",
+    "    contraste, gradient_boosting con validación cruzada ALEATORIA sobre las mismas filas (889): AUC 0.772 (optimista: mezcla pasado y futuro)",
+    "  AVISO DE RUIDO: valid tiene 5 lotes < 80 y test 17 (la ventana común, 5). Un test único oscila: AUC test 0.652 con IC95 % [0.49; 0.78]. Diferencias de ~0,03 entre modelos no significan nada; no concluyas con una sola cifra (mira también la evaluación agrupada).",
+    "  exactitud de test del elegido 0.892 frente a 0.885 de «decir siempre especialidad»: la exactitud no distingue; se usa AUC y precisión media de la clase < 80.",
+    "  Mejor modelo: gradient_boosting. Guardado en models/modelo.joblib",
+    "  Registrado en MLflow como «cafe-especialidad», versión 2. Para verlo: python -m cafe_mlops.mlflow_ui",
+    "Resumen: ingesta_raw: ejecutado · ingesta_master: ejecutado · ml: ejecutado · train: ejecutado"
+   ],
+   "tipo": "terminal"
+  },
+  "comparar_tolerancia_por_defecto": {
+   "orden": 5,
+   "comando": "python -m cafe_mlops.modeling.comparar",
+   "codigo": 1,
+   "salida": [
+    "100 filas reales de la partición test · tolerancia 1e-09",
+    "camino                                    filas     diferencia máxima  resultado",
+    "paquete (referencia)                        100             0.000e+00  coincide",
+    "joblib                                      100             0.000e+00  coincide",
+    "MLflow sklearn                              100             0.000e+00  coincide",
+    "MLflow pyfunc                               100             0.000e+00  coincide",
+    "Todos los caminos dan la misma probabilidad.",
+    "Ventana común 2016-2016 (los mismos lotes en todas las versiones; versión de datos de la candidata: 2)",
+    "Referencia: auc_comun candidata 0.7951 frente a referencia 0.8525 (diferencia -0.0574, tolerancia 0.02; mismos datos: no) -> RECHAZADA: empeora más que la tolerancia"
+   ],
+   "tipo": "terminal"
+  },
+  "comparar_tolerancia_010": {
+   "orden": 6,
+   "comando": "python -m cafe_mlops.modeling.comparar --tolerancia-referencia 0.10",
+   "codigo": 0,
+   "salida": [
+    "100 filas reales de la partición test · tolerancia 1e-09",
+    "camino                                    filas     diferencia máxima  resultado",
+    "paquete (referencia)                        100             0.000e+00  coincide",
+    "joblib                                      100             0.000e+00  coincide",
+    "MLflow sklearn                              100             0.000e+00  coincide",
+    "MLflow pyfunc                               100             0.000e+00  coincide",
+    "Todos los caminos dan la misma probabilidad.",
+    "Ventana común 2016-2016 (los mismos lotes en todas las versiones; versión de datos de la candidata: 2)",
+    "Referencia: auc_comun candidata 0.7951 frente a referencia 0.8525 (diferencia -0.0574, tolerancia 0.1; mismos datos: no) -> APROBADA"
+   ],
+   "tipo": "terminal"
+  },
+  "arranque_api": {
+   "orden": 7,
+   "comando": "python -m cafe_mlops.api",
+   "codigo": 0,
+   "tipo": "proceso",
+   "salida": [
+    "API escuchando en http://127.0.0.1:8080 (puerto libre real: se muestra el de la guia); /listo respondio 200"
+   ]
+  },
+  "api_salud": {
+   "orden": 8,
+   "comando": "GET /salud",
+   "codigo": 200,
+   "salida": {
+    "estado": "ok"
+   },
+   "tipo": "http",
+   "metodo": "GET",
+   "ruta": "/salud"
+  },
+  "api_listo": {
+   "orden": 9,
+   "comando": "GET /listo",
+   "codigo": 200,
+   "salida": {
+    "estado": "listo"
+   },
+   "tipo": "http",
+   "metodo": "GET",
+   "ruta": "/listo"
+  },
+  "api_predecir": {
+   "orden": 10,
+   "comando": "POST /predecir  (tests/datos/lote_ejemplo.json)",
+   "codigo": 200,
+   "salida": {
+    "probabilidad_especialidad": 0.9812706265623319,
+    "modelo": "gradient_boosting",
+    "version_modelo": "2",
+    "huella_datos": "bebc87b9eddf0199",
+    "avisos": []
+   },
+   "tipo": "http",
+   "metodo": "POST",
+   "ruta": "/predecir",
+   "cuerpo": "tests/datos/lote_ejemplo.json"
+  },
+  "api_predecir_422": {
+   "orden": 11,
+   "comando": "POST /predecir  (tests/datos/lote_imposible.json)",
+   "codigo": 422,
+   "salida": {
+    "detalle": "El cuerpo no cumple el contrato de la API",
+    "errores": [
+     {
+      "campo": "altitud_media_m",
+      "mensaje": "Input should be less than or equal to 4000",
+      "tipo": "less_than_equal"
+     },
+     {
+      "campo": "humedad",
+      "mensaje": "Input should be less than or equal to 1",
+      "tipo": "less_than_equal"
+     },
+     {
+      "campo": "defectos_cat1",
+      "mensaje": "Input should be greater than or equal to 0",
+      "tipo": "greater_than_equal"
+     }
+    ],
+    "id_peticion": "<id-peticion>"
+   },
+   "tipo": "http",
+   "metodo": "POST",
+   "ruta": "/predecir",
+   "cuerpo": "tests/datos/lote_imposible.json"
+  },
+  "api_predecir_aviso": {
+   "orden": 12,
+   "comando": "POST /predecir  (tests/datos/lote_categoria_nueva.json)",
+   "codigo": 200,
+   "salida": {
+    "probabilidad_especialidad": 0.9812706265623319,
+    "modelo": "gradient_boosting",
+    "version_modelo": "2",
+    "huella_datos": "bebc87b9eddf0199",
+    "avisos": [
+     {
+      "tipo": "categoria_nueva",
+      "campo": "pais",
+      "valor": "Atlantida",
+      "mensaje": "«Atlantida» no estaba en los datos de entrenamiento de pais: el modelo no la conoce y la predicción tiene menos respaldo."
+     }
+    ]
+   },
+   "tipo": "http",
+   "metodo": "POST",
+   "ruta": "/predecir",
+   "cuerpo": "tests/datos/lote_categoria_nueva.json"
+  },
+  "arranque_interfaz": {
+   "orden": 13,
+   "comando": "python -m cafe_mlops.interfaz",
+   "codigo": 0,
+   "tipo": "proceso",
+   "salida": [
+    "Interfaz escuchando en http://127.0.0.1:8090 (puerto libre real: se muestra el de la guia); /salud respondio 200"
+   ]
+  },
+  "interfaz_recomendar": {
+   "orden": 14,
+   "comando": "POST /recomendar  {\"lote_ids\": [1, 2, 3]}",
+   "codigo": 200,
+   "salida": {
+    "origen": "ids",
+    "pedidos": 3,
+    "encontrados": 3,
+    "por_segmento": {
+     "alta": 3,
+     "media": 0,
+     "baja": 0
+    },
+    "modelo": {
+     "modelo": "gradient_boosting",
+     "version_modelo": "2",
+     "huella_datos": "bebc87b9eddf0199"
+    },
+    "resultados": [
+     {
+      "lote_id": 1,
+      "probabilidad": 0.9833,
+      "segmento": "alta",
+      "recomendacion": "Probable café de especialidad: mandar a cata prioritaria.",
+      "revisar": true,
+      "avisos": [
+       {
+        "tipo": "valor_no_informado",
+        "campo": "variedad",
+        "valor": null,
+        "mensaje": "variedad no informado: el modelo lo trata como «Desconocida»."
+       }
+      ],
+      "variables": {
+       "especie": "Arabica",
+       "pais": "Ethiopia",
+       "variedad": null,
+       "metodo_proceso": "Washed / Wet",
+       "color": "Green",
+       "altitud_media_m": 2075.0,
+       "humedad": 0.12,
+       "defectos_cat1": 0.0,
+       "defectos_cat2": 0.0,
+       "quakers": 0.0
+      }
+     },
+     {
+      "lote_id": 2,
+      "probabilidad": 0.9848,
+      "segmento": "alta",
+      "recomendacion": "Probable café de especialidad: mandar a cata prioritaria.",
+      "revisar": false,
+      "avisos": [],
+      "variables": {
+       "especie": "Arabica",
+       "pais": "Ethiopia",
+       "variedad": "Other",
+       "metodo_proceso": "Washed / Wet",
+       "color": "Green",
+       "altitud_media_m": 2075.0,
+       "humedad": 0.12,
+       "defectos_cat1": 0.0,
+       "defectos_cat2": 1.0,
+       "quakers": 0.0
+      }
+     },
+     {
+      "lote_id": 3,
+      "probabilidad": 0.9777,
+      "segmento": "alta",
+      "recomendacion": "Probable café de especialidad: mandar a cata prioritaria.",
+      "revisar": true,
+      "avisos": [
+       {
+        "tipo": "valor_no_informado",
+        "campo": "metodo_proceso",
+        "valor": null,
+        "mensaje": "metodo_proceso no informado: el modelo lo trata como «Desconocida»."
+       },
+       {
+        "tipo": "valor_no_informado",
+        "campo": "color",
+        "valor": null,
+        "mensaje": "color no informado: el modelo lo trata como «Desconocida»."
+       },
+       {
+        "tipo": "valor_no_informado",
+        "campo": "humedad",
+        "valor": null,
+        "mensaje": "humedad no informado: el modelo usa la mediana del entrenamiento."
+       }
+      ],
+      "variables": {
+       "especie": "Arabica",
+       "pais": "Guatemala",
+       "variedad": "Bourbon",
+       "metodo_proceso": null,
+       "color": null,
+       "altitud_media_m": 1700.0,
+       "humedad": null,
+       "defectos_cat1": 0.0,
+       "defectos_cat2": 0.0,
+       "quakers": 0.0
+      }
+     }
+    ],
+    "no_encontrados": []
+   },
+   "tipo": "http",
+   "metodo": "POST",
+   "ruta": "/recomendar",
+   "cuerpo": {
+    "lote_ids": [
+     1,
+     2,
+     3
+    ]
+   }
+  }
+ },
+ "github_actions": {
+  "origen": "github-actions",
+  "fuente": "TAREAS.md, «Notas de T15» (prueba real en GitHub, 14/11/2026), repositorio de prueba del taller",
+  "validar": {
+   "origen": "github-actions",
+   "run": 43634940765,
+   "resultado": "verde",
+   "duracion": "7 min 42 s",
+   "pruebas_que_pasan": 422,
+   "pipeline_segunda_ejecucion": "sin cambios",
+   "imagen_cafe_api": {
+    "tamano": "826 MB",
+    "comprimida": "183 MB",
+    "usuario": 10001
+   },
+   "imagen_cafe_interfaz": {
+    "tamano": "213 MB",
+    "comprimida": "51 MB",
+    "usuario": 10001,
+    "scikit_learn": "no"
+   },
+   "compose": "sano",
+   "api_publicada_fuera": "no",
+   "prediccion_por_la_interfaz": "correcta"
+  },
+  "nueva_version_rechazada": {
+   "origen": "github-actions",
+   "run": 43640636319,
+   "duracion": "1 min 34 s",
+   "hasta": 2018,
+   "tolerancia": 0.02,
+   "auc_ventana_comun_candidata": 0.7951,
+   "auc_ventana_comun_referencia": 0.8525,
+   "diferencia": -0.0574,
+   "resultado": "RECHAZADA",
+   "construye_o_publica": "no"
+  },
+  "nueva_version_aprobada": {
+   "origen": "github-actions",
+   "run": 43641866374,
+   "duracion": "4 min 30 s",
+   "hasta": 2018,
+   "tolerancia": 0.1,
+   "huella_datos": "bebc87b9eddf0199",
+   "aprobacion_manual": "environment produccion",
+   "imagenes_publicadas": [
+    "ghcr.io/<usuario>/cafe-api:v2-bebc87b9eddf0199",
+    "ghcr.io/<usuario>/cafe-interfaz:v2-bebc87b9eddf0199"
+   ],
+   "visibilidad_paquetes": "privados",
+   "pull_request": 1
+  }
+ }
+}

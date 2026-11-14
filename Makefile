@@ -6,10 +6,13 @@ HASTA ?= 2016
 
 FORZAR ?=
 
-.PHONY: ayuda operacional raw master ml train pipeline mlflow test test-rapido api interfaz comparar imagen imagen-interfaz imagenes contenedor compose-arriba compose-abajo lock limpiar
+.PHONY: ayuda verificar operacional raw master ml train pipeline mlflow test test-rapido api interfaz comparar imagen imagen-interfaz imagenes contenedor compose-arriba compose-abajo lock limpiar
 
 ayuda:  ## Muestra esta ayuda
 	@grep -E '^[a-z-]+:.*##' Makefile | sed 's/:.*##/ -> /'
+
+verificar:  ## Comprueba el entorno: Python 3.11, paquetes, datos y Docker (SIN_DOCKER=1 para no mirar Docker)
+	$(PYTHON) -m cafe_mlops.verificar $(if $(SIN_DOCKER),--sin-docker,)
 
 operacional:  ## Simula la base operacional cqi.db desde los CSV de data/raw/cqi (HASTA=2016 version 1 de los datos, HASTA=2018 version 2)
 	$(PYTHON) -m cafe_mlops.operacional --hasta $(HASTA)
