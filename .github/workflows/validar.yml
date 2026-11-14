@@ -99,7 +99,13 @@ jobs:
           docker compose -f deploy/docker/compose.yaml exec -T api python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8080/salud').read().decode())" | tee /tmp/s/3-api-salud.txt
           docker compose -f deploy/docker/compose.yaml exec -T api python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8080/listo').read().decode())" | tee /tmp/s/3-api-listo.txt
           # una prediccion por la interfaz (que llama a la API por su nombre en la red, http://api:8080)
-          curl -fsS -X POST http://127.0.0.1:8090/recomendar -H 'content-type: application/json' -d '{"lote_ids": [1, 2, 3]}' > /tmp/r.json
+          codigo=0
+          curl -sS -o /tmp/r.json -w '%{http_code}' -X POST http://127.0.0.1:8090/recomendar -H 'content-type: application/json' -d '{"lote_ids": [1, 2, 3]}' > /tmp/http.txt || codigo=$?
+          if [ "$codigo" != "0" ] || [ "$(cat /tmp/http.txt)" != "200" ]; then
+            cuerpo="$(head -c 700 /tmp/r.json | tr '\n\r' '  ')"
+            echo "::error title=Prediccion por la interfaz::HTTP $(cat /tmp/http.txt) (curl $codigo): $cuerpo"
+            exit 1
+          fi
           python - <<'FIN'
           import json
           r = json.load(open('/tmp/r.json'))
@@ -116,7 +122,10 @@ jobs:
 
       - name: Registros (si algo falla)
         if: failure()
-        run: docker compose -f deploy/docker/compose.yaml logs --tail 60 || true
+        run: |
+          docker compose -f deploy/docker/compose.yaml logs --tail 60 > /tmp/registros.txt 2>&1 || true
+          cat /tmp/registros.txt
+          echo "::error title=registros-compose::$(tail -n 25 /tmp/registros.txt | cut -c1-300 | sed -e ':a' -e 'N' -e '$!ba' -e 's/%/%25/g' -e 's/\r//g' -e 's/\n/%0A/g')"
 
       - name: Bajar compose
         if: always()
