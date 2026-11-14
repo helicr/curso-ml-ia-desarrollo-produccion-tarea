@@ -1,0 +1,11 @@
+# Contexto de construccion de la imagen de la INTERFAZ (deploy/docker/interfaz.Dockerfile).
+# Docker (BuildKit) usa este archivo en lugar del .dockerignore de la raiz cuando se construye con  -f deploy/docker/interfaz.Dockerfile:
+# cada imagen tiene su propia lista. Estrategia: excluir TODO y dejar pasar solo lo que la imagen copia.
+*
+!requirements-api.lock
+!requirements-interfaz.txt
+!cafe_mlops
+
+# Aunque esten dentro de lo permitido, fuera:
+**/__pycache__
+**/*.py[cod]

@@ -1,0 +1,39 @@
+# El servicio completo en un archivo: la API del modelo y la interfaz, en su propia red (cafe_default).
+#
+# Desde la raiz del repositorio, DESPUES de  make pipeline  (deja models/modelo_mlflow y data/processed/cafe.db):
+#   docker compose -f deploy/docker/compose.yaml up --build -d --wait   # construye las dos imagenes y arranca (make compose-arriba)
+#   docker compose -f deploy/docker/compose.yaml ps                     # estado y salud de cada servicio
+#   docker compose -f deploy/docker/compose.yaml logs -f interfaz       # registros de uno
+#   docker compose -f deploy/docker/compose.yaml down                   # para y borra contenedores y red (make compose-abajo)
+#
+# Las rutas relativas de este archivo se resuelven desde ESTA carpeta (deploy/docker): por eso el contexto es ../..
+name: cafe
+
+services:
+  api:                                   # el nombre del servicio es su nombre en la red: la interfaz la llama en http://api:8080
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile
+    image: cafe-api:local
+    # Sin «ports»: la API NO se publica fuera. Solo la interfaz, dentro de la red, puede llamarla.
+    # Para probarla con curl desde fuera, descomenta:
+    # ports: ["8080:8080"]
+
+  interfaz:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/interfaz.Dockerfile
+    image: cafe-interfaz:local
+    ports:
+      - "8090:8090"                      # equipo:contenedor -> http://127.0.0.1:8090 (en Codespaces, pestana Puertos)
+    environment:
+      TALLER_URL_API: http://api:8080    # la misma imagen sirve para otra API cambiando esto
+      TALLER_DB: /datos/cafe.db
+      TALLER_DB_SOLO_LECTURA: "1"
+      TALLER_REPOSITORIO: ${GITHUB_REPOSITORY:-}   # la cabecera de la interfaz muestra el repositorio (vacio fuera de GitHub)
+      CODESPACE_NAME: ${CODESPACE_NAME:-}
+    volumes:
+      - ../../data/processed:/datos:ro   # los datos NO van en la imagen: se montan, y en solo lectura
+    depends_on:
+      api:
+        condition: service_healthy       # espera a que el HEALTHCHECK de la API diga «sano» antes de arrancar

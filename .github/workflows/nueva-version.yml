@@ -1,0 +1,361 @@
+name: Nueva version del modelo
+# QUE HACE  (a mano: Actions > Nueva version del modelo > Run workflow > hasta = 2016 | 2018, por defecto 2018;
+#            tolerancia opcional: vacia usa 0.02 y la version 2 sale RECHAZADA; con 0.10 se aprueba y llega hasta publicar)
+#   Simula que llegan lotes nuevos (--hasta 2018 = version 2 de los datos) y recorre el camino completo hasta produccion:
+#     1) entrenar:    reentrena con los datos pedidos y COMPARA con models/referencia.json (la ultima version aprobada). Si la
+#                     metrica sobre la ventana comun empeora mas que config.TOLERANCIA_COMPARACION, SE PARA con un mensaje claro y no se
+#                     construye ni publica nada. Si los datos son los mismos que los de la referencia, tampoco hay nada que publicar.
+#     2) construir:   construye las dos imagenes (cafe-api con el modelo nuevo y cafe-interfaz), las prueba con compose
+#                     (/salud, /listo, huella del modelo, una prediccion por la interfaz) y las guarda como artefacto.
+#     3) publicar:    ESPERA LA APROBACION MANUAL del environment «produccion»; aprobada, publica en GitHub Container Registry
+#                     ghcr.io/<propietario>/cafe-api:<version> y ghcr.io/<propietario>/cafe-interfaz:<version>
+#                     (<version> = v<version de los datos>-<huella de los datos>, p. ej. v2-0123456789abcdef).
+#     4) referencia:  abre un PULL REQUEST con la rama nueva «referencia/<version>-<n.º de ejecucion>» que actualiza
+#                     models/referencia.json. NUNCA hace push a main ni a develop: la nueva referencia entra cuando una persona
+#                     fusiona ese PR.
+#   Sin secretos propios: solo usa el GITHUB_TOKEN que GitHub crea en cada ejecucion, con los permisos minimos de cada trabajo.
+#
+# QUE CONFIGURA QUIEN ADMINISTRA EL REPOSITORIO (una vez; sin esto el workflow falla o no pide aprobacion)
+#   1) Settings > Environments > New environment > nombre exacto «produccion» > «Required reviewers»: anadir a quien deba aprobar.
+#      Si el environment existe sin revisores, la publicacion NO esperaria a nadie: hay que anadirlos.
+#   2) Settings > Actions > General > Workflow permissions: marcar «Allow GitHub Actions to create and approve pull requests»
+#      (sin ello, el paso de abrir el PR falla con «not permitted to create or approve pull requests»).
+#      Los permisos por defecto del token pueden seguir en «solo lectura»: cada trabajo pide los suyos.
+#   3) Paquetes en GHCR: la primera publicacion crea los paquetes cafe-api y cafe-interfaz PRIVADOS. Para que se puedan descargar
+#      sin iniciar sesion: Packages > (paquete) > Package settings > Change visibility > Public. Si el repositorio es de una
+#      organizacion, puede que haya que permitir los paquetes publicos en la organizacion.
+#   4) Un PR creado con GITHUB_TOKEN no dispara otros workflows (regla de GitHub): el workflow «Validar» no se ejecuta solo sobre
+#      ese PR; se puede lanzar a mano sobre la rama del PR o cerrar y reabrir el PR.
+#
+# SIN VERIFICAR (hasta que se ejecute en GitHub, tarea T15): los nombres de las versiones de las acciones (actions/checkout@v4,
+# actions/setup-python@v5, actions/upload-artifact@v4, actions/download-artifact@v4) son etiquetas mayores muy usadas; conviene
+# comprobar en el Marketplace cual es la vigente, o fijarlas por SHA de commit. La publicacion en GHCR y la creacion del PR no se han
+# ejecutado nunca. Las cifras salen de la ejecucion, no estan escritas a mano.
+on:
+  workflow_dispatch:
+    inputs:
+      hasta:
+        description: "Catas hasta este ano: 2016 = version 1 de los datos, 2018 = llegan lotes nuevos (version 2)"
+        type: choice
+        options:
+          - "2018"
+          - "2016"
+        default: "2018"
+      tolerancia:
+        description: "Cuanto puede empeorar el AUC frente a la referencia (vacio = la de config.TOLERANCIA_COMPARACION, 0.02). Con 0.02 la version 2 sale RECHAZADA: pruebalo con 0.10 para recorrer el camino hasta publicar"
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nueva-version-modelo
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash      # bash con -e y pipefail: un fallo dentro de una tuberia (orden | tee) tambien rompe el paso
+
+jobs:
+  entrenar:
+    name: Reentrenar y comparar con la referencia
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      hay_novedad: ${{ steps.datos.outputs.hay_novedad }}
+      etiqueta: ${{ steps.datos.outputs.etiqueta }}
+    env:
+      HASTA: ${{ inputs.hasta }}
+      TOLERANCIA_ENTRADA: ${{ inputs.tolerancia }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Instalar dependencias fijadas
+        run: |
+          mkdir -p /tmp/s
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e . --no-deps
+
+      - name: Comprobar el dato de entrada
+        run: |
+          case "$HASTA" in
+            2016|2018) echo "hasta = $HASTA" ;;
+            *) echo "::error title=Entrada no valida::hasta debe ser 2016 o 2018 (recibido: $HASTA)"; exit 1 ;;
+          esac
+
+      - name: Reentrenar (pipeline completo con los datos pedidos)
+        run: |
+          python -m cafe_mlops.pipeline --hasta "$HASTA" | tee /tmp/pipeline.txt
+          grep '^Resumen' /tmp/pipeline.txt > /tmp/s/1-pipeline.txt
+
+      - name: Comparar con models/referencia.json
+        run: |
+          tolerancia="$(python -c 'from cafe_mlops import config; print(config.TOLERANCIA_COMPARACION)')"
+          if [ -n "$TOLERANCIA_ENTRADA" ]; then
+            valida=0
+            python -c 'import sys; v = float(sys.argv[1]); assert 0 <= v <= 1' "$TOLERANCIA_ENTRADA" 2>/dev/null || valida=1
+            if [ "$valida" = "1" ]; then
+              echo "::error title=Entrada no valida::tolerancia debe ser un numero entre 0 y 1 (recibido: $TOLERANCIA_ENTRADA)"
+              exit 1
+            fi
+            tolerancia="$TOLERANCIA_ENTRADA"
+            echo "::notice title=Tolerancia::Se usa la tolerancia pedida a mano ($tolerancia), no la de config.py"
+          fi
+          codigo=0
+          python -m cafe_mlops.modeling.comparar --tolerancia-referencia "$tolerancia" > /tmp/comparar.txt 2>&1 || codigo=$?
+          cat /tmp/comparar.txt
+          grep '^Referencia' /tmp/comparar.txt > /tmp/s/1-comparacion.txt || true
+          if [ "$codigo" = "2" ]; then
+            echo "::error title=No se pudo comparar::$(tail -n 1 /tmp/comparar.txt). Falta models/referencia.json o models/metadatos.json."
+            exit 1
+          fi
+          if grep -q 'RECHAZADA' /tmp/comparar.txt; then
+            echo "::error title=Version rechazada::El modelo nuevo EMPEORA mas que la tolerancia ($tolerancia) frente a la referencia. No se construye ni se publica nada. Detalle: $(grep '^Referencia' /tmp/comparar.txt)"
+            exit 1
+          fi
+          if [ "$codigo" != "0" ]; then
+            echo "::error title=Los caminos de prediccion difieren::El paquete, el joblib y el modelo MLflow no dan la misma probabilidad. Mira la salida de «comparar» en el registro de este paso."
+            exit 1
+          fi
+          echo "Comparacion superada (tolerancia $tolerancia)."
+
+      - name: Datos de la version candidata
+        id: datos
+        run: |
+          python - <<'FIN' >> "$GITHUB_OUTPUT"
+          import json
+          nueva = json.load(open('models/metadatos.json', encoding='utf-8'))
+          ref = json.load(open('models/referencia.json', encoding='utf-8'))
+          print(f"etiqueta=v{nueva['version_datos']}-{nueva['huella_datos']}")
+          print('hay_novedad=' + ('false' if nueva['huella_datos'] == ref.get('huella_datos') else 'true'))
+          FIN
+          cat "$GITHUB_OUTPUT"
+
+      - name: Candidata como referencia nueva (aun no se guarda en el repositorio)
+        if: steps.datos.outputs.hay_novedad == 'true'
+        run: |
+          mkdir -p candidata
+          TALLER_REFERENCIA="$PWD/candidata/referencia.json" python -m cafe_mlops.modeling.comparar --fijar-referencia
+
+      - name: Resumen de la ejecucion
+        if: always()
+        run: |
+          python - <<'FIN' >> "$GITHUB_STEP_SUMMARY"
+          import json, os
+          print(f"## Nueva version del modelo (catas hasta {os.environ['HASTA']})\n")
+          try:
+              nueva = json.load(open('models/metadatos.json', encoding='utf-8'))
+              ref = json.load(open('models/referencia.json', encoding='utf-8'))
+          except OSError:
+              print('No hay modelo entrenado: el paso de entrenamiento no termino.')
+          else:
+              print('| | referencia | candidata |\n|---|---|---|')
+              print(f"| version de los datos | {ref.get('version_datos')} | {nueva['version_datos']} |")
+              print(f"| huella de los datos | {ref.get('huella_datos')} | {nueva['huella_datos']} |")
+              print(f"| catas hasta | {ref.get('anio_cata_maximo')} | {nueva['anio_cata_maximo']} |")
+              print(f"| AUC en la ventana comun (2016) | {ref.get('auc_comun', float('nan')):.4f} | {nueva['metricas_comun']['auc']:.4f} |")
+          FIN
+          [ -f /tmp/s/1-comparacion.txt ] && cat /tmp/s/1-comparacion.txt >> "$GITHUB_STEP_SUMMARY"; true
+
+      - name: Aviso si no hay nada nuevo que publicar
+        if: steps.datos.outputs.hay_novedad == 'false'
+        run: |
+          echo "::notice title=Sin novedad::Los datos tienen la misma huella que la referencia: no se construye ni se publica nada."
+
+      - name: Subir el modelo y los datos para construir las imagenes
+        if: steps.datos.outputs.hay_novedad == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: modelo
+          retention-days: 1
+          path: |
+            models/modelo_mlflow
+            models/metadatos.json
+            data/processed/cafe.db
+
+      - name: Subir la referencia nueva (para el pull request)
+        if: steps.datos.outputs.hay_novedad == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: referencia-nueva
+          retention-days: 7
+          path: candidata/referencia.json
+
+      - name: Cifras reales
+        if: always()
+        run: |
+          for f in /tmp/s/1-*.txt; do [ -f "$f" ] && echo "::notice title=$(basename "$f" .txt)::$(sed -e ':a' -e 'N' -e '$!ba' -e 's/%/%25/g' -e 's/\r//g' -e 's/\n/%0A/g' "$f")"; done; true
+
+  construir:
+    name: Construir y probar las dos imagenes
+    needs: entrenar
+    if: needs.entrenar.outputs.hay_novedad == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      ETIQUETA: ${{ needs.entrenar.outputs.etiqueta }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: modelo
+          path: .
+
+      - name: Construir las dos imagenes (con la etiqueta que usa compose)
+        run: |
+          mkdir -p /tmp/s
+          etiquetas=(--label "org.opencontainers.image.source=https://github.com/${GITHUB_REPOSITORY}"
+                     --label "org.opencontainers.image.revision=${GITHUB_SHA}"
+                     --label "org.opencontainers.image.version=${ETIQUETA}")
+          docker build "${etiquetas[@]}" -f deploy/docker/Dockerfile -t cafe-api:local .
+          docker build "${etiquetas[@]}" -f deploy/docker/interfaz.Dockerfile -t cafe-interfaz:local .
+          docker image ls 'cafe-*' --format '{{.Repository}}:{{.Tag}}  {{.Size}}' | tee /tmp/s/2-imagenes.txt
+          test "$(docker run --rm --entrypoint id cafe-api:local -u)" = "10001"
+          test "$(docker run --rm --entrypoint id cafe-interfaz:local -u)" = "10001"
+          if docker run --rm --entrypoint python cafe-interfaz:local -c "import sklearn" 2> /dev/null; then echo "MAL: la interfaz lleva scikit-learn"; exit 1; fi
+
+      - name: Probar con compose (las mismas imagenes que se van a publicar)
+        run: |
+          set -x
+          docker compose -f deploy/docker/compose.yaml up -d --wait --no-build
+          docker compose -f deploy/docker/compose.yaml ps --format 'table {{.Service}}\t{{.Status}}\t{{.Ports}}' | tee /tmp/s/2-compose-ps.txt
+          curl -fsS http://127.0.0.1:8090/salud; echo
+          curl -fsS http://127.0.0.1:8090/listo; echo
+          # la API es la del modelo NUEVO: su huella es la de la etiqueta
+          docker compose -f deploy/docker/compose.yaml exec -T api python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8080/modelo').read().decode())" > /tmp/modelo.json
+          huella="${ETIQUETA#*-}"
+          grep -q "$huella" /tmp/modelo.json || { echo "MAL: la API no sirve el modelo con la huella $huella"; cat /tmp/modelo.json; exit 1; }
+          echo "La API sirve el modelo con la huella $huella" | tee /tmp/s/2-huella.txt
+          curl -fsS -X POST http://127.0.0.1:8090/recomendar -H 'content-type: application/json' -d '{"lote_ids": [1, 2, 3]}' > /tmp/r.json
+          python - <<'FIN'
+          import json
+          r = json.load(open('/tmp/r.json'))
+          assert r['encontrados'] >= 1, r
+          assert all(0 <= x['probabilidad'] <= 1 for x in r['resultados']), r
+          lineas = [f"lote {x['lote_id']}: probabilidad {x['probabilidad']} -> {x['segmento']}" for x in r['resultados']]
+          open('/tmp/s/2-recomendar.txt', 'w', encoding='utf-8').write('\n'.join(lineas) + '\n')
+          print('\n'.join(lineas))
+          FIN
+
+      - name: Registros (si algo falla)
+        if: failure()
+        run: docker compose -f deploy/docker/compose.yaml logs --tail 60 || true
+
+      - name: Bajar compose
+        if: always()
+        run: docker compose -f deploy/docker/compose.yaml down || true
+
+      - name: Guardar las imagenes probadas
+        run: docker save cafe-api:local cafe-interfaz:local | gzip > "$RUNNER_TEMP/imagenes.tar.gz"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: imagenes
+          retention-days: 1
+          path: ${{ runner.temp }}/imagenes.tar.gz
+
+      - name: Cifras reales
+        if: always()
+        run: |
+          for f in /tmp/s/2-*.txt; do [ -f "$f" ] && echo "::notice title=$(basename "$f" .txt)::$(sed -e ':a' -e 'N' -e '$!ba' -e 's/%/%25/g' -e 's/\r//g' -e 's/\n/%0A/g' "$f")"; done; true
+
+  publicar:
+    name: Publicar en GHCR (con aprobacion manual)
+    needs: [entrenar, construir]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # El trabajo se queda en «Waiting» hasta que un revisor del environment lo apruebe (ver la cabecera: lo configura quien administra).
+    environment:
+      name: produccion
+    permissions:
+      contents: read
+      packages: write
+    env:
+      ETIQUETA: ${{ needs.entrenar.outputs.etiqueta }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: imagenes
+          path: ${{ runner.temp }}
+
+      - name: Cargar las imagenes probadas
+        run: gunzip -c "$RUNNER_TEMP/imagenes.tar.gz" | docker load
+
+      - name: Iniciar sesion en GHCR y publicar
+        run: |
+          propietario="$(echo "$GITHUB_REPOSITORY_OWNER" | tr '[:upper:]' '[:lower:]')"   # GHCR exige minusculas
+          echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          mkdir -p /tmp/s
+          for imagen in cafe-api cafe-interfaz; do
+            destino="ghcr.io/${propietario}/${imagen}:${ETIQUETA}"
+            docker tag "${imagen}:local" "$destino"
+            docker push "$destino"
+            echo "$destino" | tee -a /tmp/s/3-publicadas.txt
+            docker image inspect "$destino" --format '  digest: {{index .RepoDigests 0}}' | tee -a /tmp/s/3-publicadas.txt
+          done
+          echo "Para descargar sin iniciar sesion, el paquete debe ser publico (lo cambia quien administra el repositorio)." | tee -a /tmp/s/3-publicadas.txt
+
+      - name: Cifras reales
+        if: always()
+        run: |
+          for f in /tmp/s/3-*.txt; do [ -f "$f" ] && echo "::notice title=$(basename "$f" .txt)::$(sed -e ':a' -e 'N' -e '$!ba' -e 's/%/%25/g' -e 's/\r//g' -e 's/\n/%0A/g' "$f")"; done; true
+
+  referencia:
+    name: Abrir el pull request que actualiza la referencia
+    needs: [entrenar, publicar]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write         # solo para crear la RAMA NUEVA del pull request (nunca se empuja a main ni a develop)
+      pull-requests: write    # para abrir el pull request
+    env:
+      ETIQUETA: ${{ needs.entrenar.outputs.etiqueta }}
+      BASE: ${{ github.ref_name }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: referencia-nueva
+          path: candidata
+
+      - name: Rama nueva, commit y pull request
+        run: |
+          rama="referencia/${ETIQUETA}-${GITHUB_RUN_ID}"
+          case "$rama" in main|develop|master) echo "MAL: no se empuja a $rama"; exit 1 ;; esac
+          python - <<'FIN' > /tmp/cuerpo.md
+          import json, os
+          ref = json.load(open('models/referencia.json', encoding='utf-8'))
+          nueva = json.load(open('candidata/referencia.json', encoding='utf-8'))
+          print(f"Actualiza `models/referencia.json` con la version **{os.environ['ETIQUETA']}**, publicada en GHCR tras la aprobacion del environment `produccion`.\n")
+          print('| | referencia actual | referencia nueva |\n|---|---|---|')
+          print(f"| version de los datos | {ref.get('version_datos')} | {nueva.get('version_datos')} |")
+          print(f"| huella de los datos | {ref.get('huella_datos')} | {nueva.get('huella_datos')} |")
+          print(f"| catas hasta | {ref.get('anio_cata_maximo')} | {nueva.get('anio_cata_maximo')} |")
+          print(f"| AUC en la ventana comun (2016) | {ref.get('auc_comun', float('nan')):.4f} | {nueva.get('auc_comun', float('nan')):.4f} |")
+          print(f"\nGenerado por la ejecucion {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}. Al fusionar este pull request, la nueva version pasa a ser la referencia de las proximas comparaciones.")
+          FIN
+          cp candidata/referencia.json models/referencia.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$rama"
+          git add models/referencia.json
+          git commit -m "Referencia del modelo: ${ETIQUETA}"
+          git push origin "refs/heads/${rama}"
+          url="$(gh pr create --base "$BASE" --head "$rama" --title "Referencia del modelo: ${ETIQUETA}" --body-file /tmp/cuerpo.md)"
+          echo "::notice title=pull-request::${url}"

@@ -1,0 +1,137 @@
+name: Validar
+# QUE HACE
+#   Comprueba, con Docker real, que la plantilla funciona de punta a punta. No publica nada y no usa secretos.
+#     1) instala las dependencias fijadas (requirements-dev.txt: versiones exactas) y pasa las pruebas rapidas de pytest;
+#     2) ejecuta el pipeline completo con los datos de la version 1 (--hasta 2016) y lo repite (debe decir «sin cambios»);
+#     3) construye las dos imagenes (cafe-api y cafe-interfaz) y comprueba usuario 10001 y que la interfaz no lleva scikit-learn;
+#     4) levanta compose con --wait y comprueba /salud, /listo y una prediccion pedida por la interfaz (/recomendar);
+#     5) publica como anotaciones (::notice) las cifras reales de la ejecucion (pruebas, pipeline, tamanos de imagen, prediccion);
+#     6) baja compose y borra lo creado, pase lo que pase.
+#   Se ejecuta en cada push, en cada pull request y a mano (Actions > Validar > Run workflow).
+#
+# QUE CONFIGURA QUIEN ADMINISTRA EL REPOSITORIO
+#   Nada: este workflow solo lee el repositorio (permissions: contents: read) y no necesita secretos ni environments.
+#   Solo hace falta que GitHub Actions este activado en el repositorio (en uno creado desde una plantilla, a veces hay que
+#   activarlo en la pestana Actions la primera vez).
+#
+# SIN VERIFICAR (hasta que se ejecute en GitHub, tarea T15): los nombres de las versiones de las acciones (actions/checkout@v4,
+# actions/setup-python@v5) son etiquetas mayores muy usadas; conviene comprobar en el Marketplace cual es la vigente, o fijarlas
+# por SHA de commit. Las cifras (duracion, tamanos, AUC) salen de la propia ejecucion: aqui no hay ninguna escrita a mano.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validar-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash      # bash con -e y pipefail: un fallo dentro de una tuberia (orden | tee) tambien rompe el paso
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+    # (compose pasa GITHUB_REPOSITORY, que GitHub ya define, a la interfaz: su cabecera muestra el repositorio)
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"          # la misma version que la imagen (python:3.11-slim); una prueba lo vigila
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Instalar dependencias fijadas
+        run: |
+          mkdir -p /tmp/s     # salidas que se publican como anotaciones al final
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e . --no-deps
+          python --version | tee /tmp/s/1-python.txt
+
+      - name: Pruebas rapidas (pytest, sin cuadernos)
+        run: |
+          python -m pytest -q -m "not lento" | tee /tmp/pytest.txt
+          tail -n 1 /tmp/pytest.txt > /tmp/s/1-pruebas.txt
+
+      - name: Pipeline con los datos de la version 1 (--hasta 2016), dos veces
+        run: |
+          python -m cafe_mlops.pipeline --hasta 2016 | tee /tmp/pipeline-1.txt
+          grep '^Resumen' /tmp/pipeline-1.txt > /tmp/s/1-pipeline-primera.txt
+          python -m cafe_mlops.pipeline --hasta 2016 | tee /tmp/pipeline-2.txt
+          grep '^Resumen' /tmp/pipeline-2.txt > /tmp/s/1-pipeline-segunda.txt
+          # la segunda vez no debe rehacer nada (idempotencia). Con «set -e» una orden negada con «!» nunca hace fallar el paso:
+          # por eso se escribe «if ...; then exit 1».
+          if grep -q 'ejecutado' /tmp/s/1-pipeline-segunda.txt; then echo "MAL: la segunda ejecucion rehizo algun pipeline"; exit 1; fi
+          python -m cafe_mlops.modeling.comparar | tee /tmp/comparar.txt
+          grep '^Referencia' /tmp/comparar.txt > /tmp/s/1-referencia.txt
+
+      - name: Construir las dos imagenes
+        run: |
+          docker build -f deploy/docker/Dockerfile -t cafe-api:local .
+          docker build -f deploy/docker/interfaz.Dockerfile -t cafe-interfaz:local .
+          docker image ls 'cafe-*' --format '{{.Repository}}:{{.Tag}}  {{.Size}}' | tee /tmp/s/2-imagenes.txt
+          docker image inspect cafe-api:local cafe-interfaz:local --format '{{index .RepoTags 0}} {{.Size}} bytes' | tee /tmp/s/2-imagenes-bytes.txt
+          test "$(docker run --rm --entrypoint id cafe-api:local -u)" = "10001"
+          test "$(docker run --rm --entrypoint id cafe-interfaz:local -u)" = "10001"
+          echo "usuario de los dos contenedores: 10001 (no root)" | tee /tmp/s/2-usuario.txt
+          # la interfaz no necesita scikit-learn ni mlflow: si los lleva, la imagen no es la minima
+          if docker run --rm --entrypoint python cafe-interfaz:local -c "import sklearn" 2> /tmp/s/2-sin-sklearn.txt; then echo "MAL: la interfaz lleva scikit-learn"; exit 1; fi
+          tail -n 1 /tmp/s/2-sin-sklearn.txt > /tmp/x && mv /tmp/x /tmp/s/2-sin-sklearn.txt
+
+      - name: Levantar compose y comprobar /salud, /listo y una prediccion
+        run: |
+          set -x
+          docker compose -f deploy/docker/compose.yaml up --build -d --wait
+          docker compose -f deploy/docker/compose.yaml ps --format 'table {{.Service}}\t{{.Status}}\t{{.Ports}}' | tee /tmp/s/3-compose-ps.txt
+          # la interfaz esta publicada en el 8090
+          curl -fsS http://127.0.0.1:8090/salud | tee /tmp/s/3-interfaz-salud.txt; echo
+          curl -fsS http://127.0.0.1:8090/listo | tee /tmp/s/3-interfaz-listo.txt; echo
+          # la API NO esta publicada: desde el equipo no se llega; desde dentro de la red de compose, si
+          if curl -fsS --max-time 3 http://127.0.0.1:8080/salud 2> /dev/null; then echo "MAL: la API esta publicada"; exit 1; fi
+          docker compose -f deploy/docker/compose.yaml exec -T api python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8080/salud').read().decode())" | tee /tmp/s/3-api-salud.txt
+          docker compose -f deploy/docker/compose.yaml exec -T api python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8080/listo').read().decode())" | tee /tmp/s/3-api-listo.txt
+          # una prediccion por la interfaz (que llama a la API por su nombre en la red, http://api:8080)
+          curl -fsS -X POST http://127.0.0.1:8090/recomendar -H 'content-type: application/json' -d '{"lote_ids": [1, 2, 3]}' > /tmp/r.json
+          python - <<'FIN'
+          import json
+          r = json.load(open('/tmp/r.json'))
+          assert r['encontrados'] >= 1, r
+          assert r['origen'] == 'http://api:8080', r['origen']
+          assert all(0 <= x['probabilidad'] <= 1 for x in r['resultados']), r
+          lineas = [f"origen {r['origen']} | pedidos {r['pedidos']} | encontrados {r['encontrados']}"]
+          lineas += [f"lote {x['lote_id']}: probabilidad {x['probabilidad']} -> {x['segmento']}" for x in r['resultados']]
+          open('/tmp/s/3-recomendar.txt', 'w', encoding='utf-8').write('\n'.join(lineas) + '\n')
+          print('\n'.join(lineas))
+          FIN
+          # el contenedor de la interfaz tampoco corre como root
+          test "$(docker compose -f deploy/docker/compose.yaml exec -T interfaz id -u)" = "10001"
+
+      - name: Registros (si algo falla)
+        if: failure()
+        run: docker compose -f deploy/docker/compose.yaml logs --tail 60 || true
+
+      - name: Bajar compose
+        if: always()
+        run: docker compose -f deploy/docker/compose.yaml down || true
+
+      # Las cifras reales, como anotaciones (maximo 10 por paso; por eso tres pasos). Se ven en la pagina de la ejecucion.
+      - name: Cifras reales (1) pruebas y pipeline
+        if: always()
+        run: |
+          for f in /tmp/s/1-*.txt; do [ -f "$f" ] && echo "::notice title=$(basename "$f" .txt)::$(sed -e ':a' -e 'N' -e '$!ba' -e 's/%/%25/g' -e 's/\r//g' -e 's/\n/%0A/g' "$f")"; done; true
+      - name: Cifras reales (2) imagenes
+        if: always()
+        run: |
+          for f in /tmp/s/2-*.txt; do [ -f "$f" ] && echo "::notice title=$(basename "$f" .txt)::$(sed -e ':a' -e 'N' -e '$!ba' -e 's/%/%25/g' -e 's/\r//g' -e 's/\n/%0A/g' "$f")"; done; true
+      - name: Cifras reales (3) compose y prediccion
+        if: always()
+        run: |
+          for f in /tmp/s/3-*.txt; do [ -f "$f" ] && echo "::notice title=$(basename "$f" .txt)::$(sed -e ':a' -e 'N' -e '$!ba' -e 's/%/%25/g' -e 's/\r//g' -e 's/\n/%0A/g' "$f")"; done; true

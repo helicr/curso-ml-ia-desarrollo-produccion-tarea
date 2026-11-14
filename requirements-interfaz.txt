@@ -1,0 +1,7 @@
+# Lo MINIMO para la imagen de la INTERFAZ (deploy/docker/interfaz.Dockerfile).
+# No sirve el modelo (eso es la API): no necesita scikit-learn, scipy, mlflow, pandas ni numpy. Consulta cafe.db con sqlite3
+# (viene con Python) y llama a la API por HTTP con urllib (biblioteca estandar).
+# Las versiones EXACTAS no se repiten aqui: la imagen instala con  -c requirements-api.lock  (las mismas que la imagen de la API).
+fastapi
+uvicorn
+pydantic

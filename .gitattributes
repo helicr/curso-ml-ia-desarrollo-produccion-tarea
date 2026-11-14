@@ -1,0 +1,19 @@
+* text=auto
+*.html linguist-documentation
+
+# Scripts de Windows: saltos de linea CRLF al clonar (CMD es mas fragil con LF)
+*.cmd text eol=crlf
+*.bat text eol=crlf
+# Scripts de shell de las pruebas: LF
+*.sh text eol=lf
+
+# Datos de terceros: Git no debe tocar ni un byte (los SHA-256 de SHA256SUMS deben coincidir tras clonar, también en Windows)
+data/raw/cqi/*.csv -text
+
+*.xls binary
+
+# PDF: binarios, sin conversion de saltos de linea
+*.pdf binary
+
+# Parches (git apply): sin conversion de saltos de linea, o fallan al clonar en Windows
+*.patch -text

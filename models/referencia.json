@@ -1,0 +1,67 @@
+{
+  "nota": "Versión de referencia aprobada: la candidata se compara con esta (python -m cafe_mlops.modeling.comparar). No se edita a mano: la actualiza --fijar-referencia (en el workflow, un pull request).",
+  "metrica": "auc_comun",
+  "modelo": "gradient_boosting",
+  "huella_datos": "c83699881a8880b9",
+  "anio_cata_maximo": 2016,
+  "version_datos": 1,
+  "ventana_comun": [
+    2016,
+    2016
+  ],
+  "auc_comun": 0.8524590163934427,
+  "metricas_comun": {
+    "n": 127,
+    "especialidad": 122,
+    "no_especialidad": 5,
+    "tasa_base_especialidad": 0.9606299212598425,
+    "tasa_base_no_especialidad": 0.03937007874015748,
+    "exactitud": 0.9606299212598425,
+    "exactitud_siempre_especialidad": 0.9606299212598425,
+    "auc": 0.8524590163934427,
+    "ap_especialidad": 0.9931115305621377,
+    "ap_no_especialidad": 0.4704428754813864,
+    "ap_no_especialidad_sobre_base": 11.949249037227215,
+    "auc_ic95": [
+      0.7057079945799458,
+      1.0
+    ]
+  },
+  "metricas_valid": {
+    "n": 197,
+    "especialidad": 185,
+    "no_especialidad": 12,
+    "tasa_base_especialidad": 0.9390862944162437,
+    "tasa_base_no_especialidad": 0.06091370558375635,
+    "exactitud": 0.9238578680203046,
+    "exactitud_siempre_especialidad": 0.9390862944162437,
+    "auc": 0.7123873873873875,
+    "ap_especialidad": 0.9735568168727073,
+    "ap_no_especialidad": 0.14596874154530215,
+    "ap_no_especialidad_sobre_base": 2.3963201737020436,
+    "auc_ic95": [
+      0.5535690412528648,
+      0.8584701553496108
+    ]
+  },
+  "particiones": {
+    "train": [
+      2009,
+      2014
+    ],
+    "valid": [
+      2015,
+      2015
+    ],
+    "test": [
+      2016,
+      2016
+    ]
+  },
+  "filas": {
+    "train": 866,
+    "valid": 197,
+    "test": 127
+  },
+  "entrenado_en": "2026-11-14T18:43:03"
+}
