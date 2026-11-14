@@ -19,7 +19,11 @@ def dc():
 
 
 def test_devcontainer_es_json_valido_y_usa_python_311(dc):
-    assert '3.11' in dc['image'] and 'python' in dc['image']
+    # la imagen sale de un Dockerfile propio (ver el motivo en él): Python 3.11 de Microsoft sin el repositorio apt de yarn
+    assert dc['build']['dockerfile'] == 'Dockerfile'
+    dockerfile = (RAIZ / '.devcontainer' / 'Dockerfile').read_text(encoding='utf-8')
+    assert 'FROM mcr.microsoft.com/devcontainers/python:1-3.11-bookworm' in dockerfile
+    assert '/etc/apt/sources.list.d/yarn.list' in dockerfile, 'sin quitar yarn, Docker-in-Docker falla (NO_PUBKEY 62D54FD4003F6525)'
 
 
 def test_devcontainer_docker_en_docker_sin_moby(dc):
