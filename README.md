@@ -9,6 +9,11 @@ Actions. **No hay que programar nada.** Este taller es de perfil **arquitecto**:
 ver que funciona y poder explicar **qué decisión de arquitectura hay detrás de cada pieza** y qué riesgo cubre.
 
 Guía paso a paso (dónde ejecutar, qué orden, qué debes ver, qué hacer si falla): [taller/guia-detallada.md](taller/guia-detallada.md).
+El enunciado de la tarea (qué entregas y cómo se evalúa) está en [taller/instrucciones.md](taller/instrucciones.md) y, resumido en un PDF
+con diagramas, los pasos, los criterios de evaluación y el checklist, en `taller/instrucciones-del-taller.pdf`. La guía completa, con las
+capturas de ejemplo, también está en PDF: `taller/guia-detallada.pdf`.
+
+![Recorrido de punta a punta, con la orden de cada paso](docs/img/diagrama-recorrido.svg)
 
 ## La cadena completa
 

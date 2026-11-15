@@ -9,8 +9,8 @@ from auxiliar import RAIZ
 DOCS = [RAIZ / 'README.md'] + sorted((RAIZ / 'docs').glob('*.md'))
 ESPERADOS = ['README.md', 'docs/modelo-de-datos.md', 'docs/de-notebook-a-python.md', 'docs/api-y-contenedor.md',
              'docs/del-ordenador-al-servicio.md']
-# Se escribe en T19 (guía detallada). Mientras no exista, es el único enlace que se permite roto.
-PENDIENTES = {'taller/guia-detallada.md'}
+# Enlaces que se permiten rotos mientras se escribe su destino. Ninguno: la guía (T19) ya existe.
+PENDIENTES = set()
 
 
 def _texto(ruta):
