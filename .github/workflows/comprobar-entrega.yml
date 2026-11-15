@@ -1,0 +1,55 @@
+name: Comprobar entrega
+# QUE HACE
+#   Lo ejecuta EL ALUMNO en su fork (a mano, en Actions > Comprobar entrega > Run workflow, o solo en cada push a main) y dice si la
+#   entrega esta completa. Mira el arbol del fork con taller/comprobar_entrega.py (solo biblioteca estandar) y comprueba:
+#     1) que el repositorio se llama exactamente taller-ml-ia-dev-production;
+#     2) que en evidencias/capturas/ estan las 16 capturas con su nombre exacto (png, jpg, jpeg o webp) y tamano mayor que 0;
+#     3) que en evidencias/video/ hay exactamente un MP4 (servicio-en-produccion.mp4) de menos de 50 MB;
+#     4) que evidencias/plantilla-evidencias.md ya no conserva marcadores sin rellenar (los que ponen ESCRIBE AQUI entre corchetes).
+#   El resultado sale como anotaciones (::notice si cumple, ::error si falta algo) y como tabla Cumple / Falta en el resumen del trabajo.
+#   El trabajo falla (rojo) mientras falte algo: es lo esperado antes de entregar.
+#   NO EVALUA NADA y no puede comprobar la duracion del video (de 2 a 4 minutos), que tenga voz ni que se vea la interfaz: lo dice en su
+#   mensaje y lo revisa el instructor. En el repositorio plantilla del instructor no comprueba nada (avisa y termina bien).
+#
+# QUE CONFIGURA QUIEN ADMINISTRA EL REPOSITORIO
+#   Nada: solo lee el repositorio (permissions: contents: read), no usa secretos ni environments y no necesita red. Solo hace falta que
+#   GitHub Actions este habilitado en el fork (pestana Actions, la primera vez).
+#
+# SIN VERIFICAR (hasta que se ejecute en un fork real): que github.event.repository.name llegue con el nombre esperado en un fork
+# renombrado, y los nombres de las versiones de las acciones (actions/checkout@v4, actions/setup-python@v5), que son etiquetas
+# mayores muy usadas. La logica esta en el script y se prueba en local con carpetas temporales (tests/test_comprobar_entrega.py).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: comprobar-entrega-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash      # bash con -e y pipefail
+
+jobs:
+  comprobar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    env:
+      # los valores de GitHub llegan por el entorno, nunca pegados dentro del script
+      # (si faltara, el script usa GITHUB_REPOSITORY, que GitHub ya define)
+      NOMBRE_REPOSITORIO: ${{ github.event.repository.name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"          # la misma version que el resto de workflows; una prueba lo vigila
+
+      - name: Comprobar que la entrega esta completa
+        run: python taller/comprobar_entrega.py

@@ -16,7 +16,7 @@ La plantilla está en `https://github.com/helicr/curso-ml-ia-desarrollo-producci
 
 Tu fork debe llamarse exactamente `taller-ml-ia-dev-production` y ser público. El instructor te identifica por ese nombre y por tu enlace.
 
-Hay otro PDF, `guia-detallada.pdf`, con el paso a paso completo y capturas de ejemplo. Consúltalo cuando un paso de este documento no te baste.
+Hay otro PDF, `guia-detallada-del-trabajo.pdf`, con el paso a paso completo y capturas de ejemplo. Consúltalo cuando un paso de este documento no te baste.
 
 ## El recorrido de punta a punta
 

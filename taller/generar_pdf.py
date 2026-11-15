@@ -1,8 +1,8 @@
 """Genera los dos PDF del alumno a partir del Markdown del taller (la fuente es siempre el Markdown: los PDF no se editan a mano).
 
-    taller/instrucciones-del-taller.pdf   el resumen corto, con diagramas (de 8 a 14 páginas):
+    taller/instrucciones-del-trabajo.pdf   el resumen corto, con diagramas (de 8 a 14 páginas):
                                               taller/instrucciones-en-breve.md, taller/checklist.md
-    taller/guia-detallada.pdf             la guía completa paso a paso, con las capturas de ejemplo (docs/img):
+    taller/guia-detallada-del-trabajo.pdf             la guía completa paso a paso, con las capturas de ejemplo (docs/img):
                                               taller/guia-detallada.md
 
 Los dos llevan portada con el escudo de la UNTRM y, en todas las páginas, un pie con el escudo, el nombre del taller, el profesor y «Página x de y».
@@ -51,7 +51,7 @@ PROFESOR = 'Profesor: Helí Campos R'
 # Los dos PDF. `partes`: (archivo, título corto), en el orden del PDF. `h2_en_pagina_nueva`: archivos cuyos apartados (##) empiezan página.
 BREVE = {
     'nombre': 'breve',
-    'pdf': TALLER / 'instrucciones-del-taller.pdf',
+    'pdf': TALLER / 'instrucciones-del-trabajo.pdf',
     'subtitulo': 'Instrucciones del alumno',
     'partes': [
         ('taller/instrucciones-en-breve.md', 'Instrucciones en breve'),
@@ -62,7 +62,7 @@ BREVE = {
 }
 GUIA = {
     'nombre': 'guia',
-    'pdf': TALLER / 'guia-detallada.pdf',
+    'pdf': TALLER / 'guia-detallada-del-trabajo.pdf',
     'subtitulo': 'Guía detallada',
     'partes': [
         ('taller/guia-detallada.md', 'Guía detallada'),

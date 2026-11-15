@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tarea Curso Taller «De Modelo de ML/IA a Producción»: diapositivas</title>
+<!-- Generado por generar.py: no se edita a mano. -->
+<style>
+:root{
+  --pri:#003769;--sec:#0063b1;--osc:#002a52;--g1:#f3f4f6;--g2:#e5e7eb;--g3:#6b7280;--g4:#374151;--bg:#f4f4f9;--txt:#1a1a1a;
+  --punta:#8fc3f0;
+  --mono:ui-monospace,"Cascadia Code","SFMono-Regular",Consolas,Menlo,monospace;
+  --sans:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+a{color:var(--sec)}
+code,.mono{font-family:var(--mono)}
+.mono{color:var(--osc);background:var(--g1);border:1px solid var(--g2);border-radius:4px;padding:0 5px;font-size:.88em;overflow-wrap:anywhere}
+:focus-visible{outline:3px solid var(--sec);outline-offset:2px}
+
+/* ---------- Escenario 1280x720 escalado ---------- */
+#viewport{position:fixed;left:0;right:0;top:0;bottom:46px;overflow:hidden;background:var(--bg)}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:center center}
+.slide{position:absolute;inset:0;padding:40px 60px 76px;opacity:0;visibility:hidden;transition:opacity .3s ease,visibility 0s .3s;background:var(--bg);overflow:hidden}
+.slide.active{opacity:1;visibility:visible;transition:opacity .3s ease}
+.slide::before{content:"";position:absolute;inset:0 0 auto 0;height:8px;background:var(--pri)}
+.foot{position:absolute;left:60px;right:60px;bottom:0;height:56px;border-top:1px solid var(--g2);display:flex;align-items:center;gap:14px;font-size:13.5px;color:var(--g4)}
+.foot img{height:34px;width:auto;flex:none}
+.foot .t{flex:1}
+.foot b{color:var(--pri);font-weight:600}
+.foot .n{font-variant-numeric:tabular-nums;color:var(--pri);font-weight:600}
+
+/* ---------- Texto ---------- */
+.kick{font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--sec);font-weight:700;margin-bottom:8px}
+h1{font-size:40px;line-height:1.15;letter-spacing:-.01em;margin-bottom:22px;font-weight:700;color:var(--pri)}
+h3{font-size:20px;margin-bottom:8px;color:var(--pri)}
+p{font-size:21px;line-height:1.45}
+.lead{font-size:26px;line-height:1.4;color:var(--g4)}
+.small{font-size:18px;line-height:1.45;color:var(--g4)}
+b{color:var(--pri);font-weight:700}
+.card{background:#fff;border:1px solid var(--g2);border-radius:8px;padding:16px 20px;min-width:0}
+.card.gris{background:var(--g1);border-color:#cfd3da}
+.card.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.card.pri h3,.card.pri b,.card.pri .cifra{color:#fff}
+.card.pri .mono{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);color:#fff}
+.card.pri .small{color:#e5e7eb}
+.card.pri .list li::before{background:#fff}
+.cifra{font-size:15px;font-weight:700;letter-spacing:.14em;color:var(--sec);margin-bottom:8px}
+.card.gris .cifra{color:var(--g4)}
+.tag{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 12px;border-radius:999px;border:1px solid var(--sec);color:var(--sec);background:#fff;white-space:nowrap}
+.tag.core{background:var(--sec);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.callout{border-left:5px solid var(--sec);background:#fff;border-top:1px solid var(--g2);border-right:1px solid var(--g2);border-bottom:1px solid var(--g2);padding:14px 18px;border-radius:0 8px 8px 0;font-size:19px;line-height:1.45}
+.list{list-style:none;display:flex;flex-direction:column;gap:11px}
+.list li{display:flex;gap:12px;align-items:flex-start;font-size:23px;line-height:1.38}
+.list li::before{content:"";flex:none;width:9px;height:9px;margin-top:10px;background:var(--sec)}
+.list.chica{gap:7px}.list.chica li{font-size:19px;line-height:1.38}.list.chica li::before{margin-top:8px;width:8px;height:8px}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+
+/* ---------- Portada ---------- */
+.cover{display:grid;grid-template-columns:1.25fr .75fr;gap:30px;align-items:center;height:420px}
+.cover h1{font-size:50px}
+.cover-escudo{display:grid;place-items:center}
+.cover-escudo img{width:270px;height:auto}
+
+/* ---------- Diagrama a un lado ---------- */
+.side{display:grid;gap:30px;align-items:start;margin-top:-8px}
+.dgm{border:1px solid var(--g2);border-radius:6px;background:#fff;overflow:hidden;line-height:0}
+.dgm svg{display:block}
+.sidet{min-width:0;padding-top:8px}
+.sidet h1{font-size:36px}
+.sidet .list li{font-size:21px}.sidet .list.chica li{font-size:18px}
+
+/* ---------- Terminal ---------- */
+.term{background:var(--osc);border:1px solid var(--pri);border-radius:8px;overflow:hidden}
+.term .bar{display:flex;align-items:center;gap:7px;padding:8px 12px;background:var(--pri);font-size:13px;color:#cfe3f7}
+.term .bar i{width:10px;height:10px;border-radius:50%;background:#9db4cc}
+.term .bar em{margin-left:8px;font-style:normal;flex:1}
+.tls{padding:8px 10px 10px;font-family:var(--mono);font-size:18px;line-height:1.45}
+.tln{display:flex;align-items:flex-start;gap:8px;padding:3px 4px;border-radius:5px}
+.tln:hover{background:rgba(255,255,255,.06)}
+.tln code{flex:1;white-space:pre-wrap;overflow-wrap:anywhere;color:#fff}
+.tln.c{color:#b8c9dc;font-style:italic;padding-top:6px}
+.ps{color:var(--punta)}
+.cp{flex:none;width:28px;height:26px;border-radius:5px;border:1px solid rgba(255,255,255,.4);font-size:14px;color:#e5e7eb}
+.cp:hover{border-color:var(--punta);color:#fff}
+.cp.ok{border-color:#fff;background:rgba(255,255,255,.18);color:#fff}
+.cpall{width:auto;padding:0 10px;font-family:var(--sans);font-size:12.5px}
+.tln.solo{background:var(--osc);color:#fff;font-family:var(--mono);font-size:15px;border-radius:6px;padding:5px 8px;margin-top:6px;align-items:center}
+
+/* ---------- Tablas, capturas, cuadrículas ---------- */
+.tbl{border-collapse:collapse;width:100%;background:#fff;font-size:19px}
+.tbl th{background:var(--pri);color:#fff;text-align:left;padding:7px 12px;font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+.tbl td{padding:8px 12px;border:1px solid var(--g2)}
+.capcol{display:flex;flex-direction:column;gap:8px;min-width:0}
+.capimg{display:block;width:100%;height:auto;border:1px solid var(--g3);border-radius:6px;background:#fff}
+.capa{display:block;cursor:zoom-in}
+.capa:hover .capimg{border-color:var(--sec);box-shadow:0 0 0 2px var(--sec)}
+.err{display:grid;grid-template-columns:230px 1fr;gap:18px;align-items:start}
+.err.sin{grid-template-columns:1fr;border-left:5px solid var(--sec)}
+.err h3{font-size:20px;line-height:1.25}
+.err .small{font-size:18px}
+.cap16{background:#fff;border:1px solid var(--g2);border-radius:6px;padding:10px 10px 8px;display:flex;flex-direction:column;gap:5px;align-items:flex-start;min-width:0}
+.cap16 .mono{font-size:13.5px;border:0;background:var(--g1)}
+.cap16 small{font-size:14px;color:var(--g4)}
+.stack{display:flex;height:46px;border-radius:6px;overflow:hidden}
+.stack div{display:grid;place-items:center;color:#fff;font-weight:700;font-size:22px}
+.fecha{display:flex;flex-direction:column;justify-content:center;min-height:210px}
+.fecha .gran{font-size:44px;font-weight:700;line-height:1.1;margin:6px 0 10px;color:#fff}
+
+/* ---------- Barra inferior, notas, índice ---------- */
+#bar{position:fixed;left:0;right:0;bottom:0;height:46px;background:var(--osc);color:#fff;display:flex;align-items:center;gap:6px;padding:0 12px;font-size:14px;z-index:20}
+#bar button,#bar a#bhome{padding:6px 11px;border-radius:6px;color:#fff;text-decoration:none;white-space:nowrap}
+#bar button:hover,#bar a#bhome:hover{background:var(--pri)}
+#bar .sp{flex:1}
+#bar .part{color:#b8c9dc}#bar .part.on{color:#fff;font-weight:700;box-shadow:inset 0 -3px 0 #fff}
+#prog{position:fixed;left:0;top:0;height:4px;background:var(--sec);z-index:30;transition:width .3s}
+#clockref{color:#b8c9dc;font-variant-numeric:tabular-nums;margin:0 8px}
+#notes{position:fixed;right:0;top:0;bottom:46px;width:min(400px,90vw);background:#fff;border-left:1px solid var(--g2);padding:22px 20px;transform:translateX(100%);transition:transform .3s;z-index:25;overflow:auto;box-shadow:-6px 0 18px rgba(0,0,0,.08)}
+#notes.on{transform:none}
+#notes h3{color:var(--sec);font-size:14px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+#notes p{font-size:16px;line-height:1.5;color:var(--txt);margin-bottom:10px}
+#notes .small{font-size:14px}
+#index{position:fixed;inset:0 0 46px 0;background:var(--bg);z-index:26;padding:28px 38px;overflow:auto;display:none}
+#index.on{display:block}
+#index h2{margin-bottom:16px;color:var(--pri)}
+#index .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+#index button{text-align:left;padding:12px 14px;border-radius:8px;background:#fff;border:1px solid var(--g2)}
+#index button:hover{border-color:var(--sec)}
+#index small{display:block;color:var(--sec);font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+#index button.cur{border-color:var(--pri);box-shadow:0 0 0 2px var(--pri)}
+noscript{position:fixed;inset:0;display:grid;place-items:center;font-size:22px;padding:40px;text-align:center;background:var(--bg)}
+
+/* ---------- Impresión y PDF: una diapositiva por página, sin controles ---------- */
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{overflow:visible;height:auto;background:#fff}
+  #bar,#notes,#index,#prog,.cp,.cpall{display:none!important}
+  #viewport{position:static;overflow:visible}
+  #stage{position:static;transform:none;width:1280px;height:720px}
+  .slide{display:none;position:relative;opacity:1;visibility:visible;transition:none;width:1280px;height:720px}
+  .slide.pdf-solo{display:block}
+}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<div id="viewport"><div id="stage">
+
+<section class="slide" data-part="A" data-min="1" data-title="Portada"
+ data-notes="Presente la tarea en una frase: desplegar un servicio de ML que ya está construido y explicar cómo encaja cada pieza. Aclare desde el principio que no hay que programar. Indique cómo se manejan las diapositivas: flechas, índice con O, notas con S y el botón de copiar en cada orden. Las diapositivas duran unos treinta minutos y el alumno puede volver a ellas mientras hace la tarea.">
+<p class="kick">Tarea Curso Taller</p><h1>De Modelo de ML/IA a Producción</h1>
+
+<div class="cover"><div>
+ <p class="lead">Despliegas un servicio de ML que ya está hecho y explicas cómo encaja. No programas nada.</p>
+ <div class="chips"><span class="tag core">29 minutos</span><span class="tag">Entrega el 30/11/2026</span><span class="tag">Fork: taller-ml-ia-dev-production</span></div>
+ <div class="card" style="margin-top:26px"><h3>Cómo seguir las diapositivas</h3>
+ <p class="small">Cada orden lleva <b>⧉</b>: cópiala y pégala en la terminal de tu Codespace. <b>← →</b> avanzan, <b>O</b> abre el índice, <b>S</b> las notas del ponente y <b>F</b> la pantalla completa. Las capturas se abren a tamaño completo al pulsarlas.</p></div>
+</div><div class="cover-escudo"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"></div></div>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">1 / 17</span></div>
+</section>
+
+<section class="slide" data-part="A" data-min="2" data-title="Qué es la tarea y qué no tienes que hacer"
+ data-notes="Insista en el papel: la persona que evalúa no mira código sino explicaciones. El trabajo es desplegar y entender. Si alguien pregunta qué programar, la respuesta es nada: el proyecto llega completo y solo se añade la carpeta de evidencias. El caso es sencillo de contar: un lote llega, todavía no se ha catado, y se estima la probabilidad de que supere los 80 puntos.">
+<p class="kick">La tarea</p><h1>Eres arquitecto, no programador</h1>
+
+<div class="grid2">
+ <div class="card "><h3>Lo que haces</h3><ul class="list "><li><span>Despliegas el servicio <b>de punta a punta</b> desde un Codespace.</span></li><li><span>Demuestras que funciona: <b>un vídeo y 16 capturas</b>.</span></li><li><span>Explicas en cada pieza <b>qué decisión de arquitectura hay y qué riesgo cubre</b>.</span></li></ul></div>
+ <div class="card gris"><h3>Lo que NO haces</h3><ul class="list "><li><span>No escribes código.</span></li><li><span>No cambias ningún archivo del proyecto.</span></li><li><span>No instalas nada en tu ordenador.</span></li></ul></div>
+</div>
+<div class="callout" style="margin-top:22px"><b>El caso.</b> Llega un lote de café y, antes de catarlo, se quiere saber qué probabilidad hay de que sea café de especialidad (80 puntos o más). Los datos son los del Coffee Quality Institute (CQI).</div>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">2 / 17</span></div>
+</section>
+
+<section class="slide" data-part="A" data-min="1" data-title="Qué recibes"
+ data-notes="La plantilla es la parte pesada y ya viene resuelta. El Codespace evita el problema de que cada alumno tenga un equipo distinto. La documentación está en la carpeta taller: las instrucciones resumen lo que se pide, la guía detallada da cada paso con lo que se debe ver y qué hacer si falla. Enseñe la lista de la cadena completa como mapa para el resto de diapositivas.">
+<p class="kick">La tarea</p><h1>Qué recibes</h1>
+
+<div class="grid3">
+ <div class="card "><h3>La plantilla</h3><p class="small">Un repositorio de GitHub con todo hecho: datos, pipelines, modelo, API, interfaz, Docker y workflows.</p><p class="small" style="margin-top:10px"><span class="mono">github.com/helicr/curso-ml-ia-desarrollo-produccion-tarea</span></p></div>
+ <div class="card "><h3>Un entorno listo</h3><p class="small">Un Codespace de GitHub que ya trae Python 3.11, Docker y <span class="mono">make</span>.</p><p class="small" style="margin-top:10px">No instalas nada en tu equipo.</p></div>
+ <div class="card "><h3>La documentación</h3><ul class="list chica"><li><span>Instrucciones y criterios de evaluación</span></li><li><span>Guía detallada paso a paso</span></li><li><span>Checklist y plantilla de evidencias</span></li><li><span>Guía para grabar el vídeo</span></li></ul></div>
+</div>
+<p class="small" style="margin-top:22px">La cadena que vas a desplegar: CSV del CQI, base operacional, RAW, MASTER, FS, ML, modelo, API, interfaz, imágenes Docker, Compose y GitHub Actions.</p>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">3 / 17</span></div>
+</section>
+
+<section class="slide" data-part="A" data-min="2" data-title="El recorrido de punta a punta"
+ data-notes="Recorra el diagrama de izquierda a derecha y de arriba abajo: entorno, datos y pipelines, modelo, API opcional, imágenes, contenedores, interfaz y uso. Cada caja tiene su orden. Marque que la API suelta es un paso opcional, porque con Compose la API ya va dentro de un contenedor. La franja inferior es la parte de CI/CD que veremos al final.">
+<div class="side" style="grid-template-columns:752px 1fr"><div class="dgm"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" style="width:752px;height:564px" role="img" aria-label="Recorrido de punta a punta: entorno, pipelines, modelo, API, imagen, contenedores, interfaz y uso"><title>Recorrido de punta a punta: entorno, pipelines, modelo, API, imagen, contenedores, interfaz y uso</title><defs><marker id="fl-s3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0063b1"/></marker></defs><rect width="800" height="600" fill="#ffffff"/><rect x="0" y="10" width="170" height="170" rx="6" fill="#eef6ff" stroke="#003769" stroke-width="1.6"/><text x="12" y="38.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="15" font-weight="700" fill="#0063b1" text-anchor="start">1</text><text x="30" y="38.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="17" font-weight="700" fill="#003769" text-anchor="start">Entorno</text><text x="14" y="76.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Codespace con Python,</text><text x="14" y="94.8" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Docker y make</text><rect x="10.0" y="138" width="150" height="26" rx="13" fill="#fff" stroke="#0063b1" stroke-width="1.2"/><text x="85.0" y="156.0" font-family="Consolas,'Cascadia Mono','DejaVu Sans Mono',monospace" font-size="13.5" font-weight="400" fill="#002a52" text-anchor="middle">make verificar</text><rect x="210" y="10" width="170" height="170" rx="6" fill="#eef6ff" stroke="#003769" stroke-width="1.6"/><text x="222" y="38.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="15" font-weight="700" fill="#0063b1" text-anchor="start">2</text><text x="240" y="38.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="17" font-weight="700" fill="#003769" text-anchor="start">Datos y pipelines</text><text x="224" y="76.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">CSV, RAW, MASTER,</text><text x="224" y="94.8" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">FS y ML</text><rect x="220.0" y="138" width="150" height="26" rx="13" fill="#fff" stroke="#0063b1" stroke-width="1.2"/><text x="295.0" y="156.0" font-family="Consolas,'Cascadia Mono','DejaVu Sans Mono',monospace" font-size="13.5" font-weight="400" fill="#002a52" text-anchor="middle">make pipeline</text><rect x="420" y="10" width="170" height="170" rx="6" fill="#eef6ff" stroke="#003769" stroke-width="1.6"/><text x="432" y="38.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="15" font-weight="700" fill="#0063b1" text-anchor="start">3</text><text x="450" y="38.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="17" font-weight="700" fill="#003769" text-anchor="start">Modelo</text><text x="434" y="76.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Entrenado, con versión</text><text x="434" y="94.8" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">y huella de datos</text><rect x="430.0" y="138" width="150" height="26" rx="13" fill="#fff" stroke="#0063b1" stroke-width="1.2"/><text x="505.0" y="156.0" font-family="Consolas,'Cascadia Mono','DejaVu Sans Mono',monospace" font-size="13.5" font-weight="400" fill="#002a52" text-anchor="middle">make comparar</text><rect x="630" y="10" width="170" height="170" rx="6" fill="#eef6ff" stroke="#003769" stroke-width="1.6"/><text x="642" y="38.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="15" font-weight="700" fill="#0063b1" text-anchor="start">4</text><text x="660" y="38.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="17" font-weight="700" fill="#003769" text-anchor="start">API</text><text x="644" y="76.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Sirve el modelo</text><text x="644" y="94.8" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">(paso opcional)</text><rect x="640.0" y="138" width="150" height="26" rx="13" fill="#fff" stroke="#0063b1" stroke-width="1.2"/><text x="715.0" y="156.0" font-family="Consolas,'Cascadia Mono','DejaVu Sans Mono',monospace" font-size="13.5" font-weight="400" fill="#002a52" text-anchor="middle">make api</text><rect x="630" y="250" width="170" height="170" rx="6" fill="#eef6ff" stroke="#003769" stroke-width="1.6"/><text x="642" y="278.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="15" font-weight="700" fill="#0063b1" text-anchor="start">5</text><text x="660" y="278.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="17" font-weight="700" fill="#003769" text-anchor="start">Imágenes</text><text x="644" y="316.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Dos imágenes Docker:</text><text x="644" y="334.9" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">API e interfaz</text><rect x="640.0" y="378" width="150" height="26" rx="13" fill="#fff" stroke="#0063b1" stroke-width="1.2"/><text x="715.0" y="396.0" font-family="Consolas,'Cascadia Mono','DejaVu Sans Mono',monospace" font-size="13.5" font-weight="400" fill="#002a52" text-anchor="middle">make imagenes</text><rect x="420" y="250" width="170" height="170" rx="6" fill="#eef6ff" stroke="#003769" stroke-width="1.6"/><text x="432" y="278.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="15" font-weight="700" fill="#0063b1" text-anchor="start">6</text><text x="450" y="278.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="17" font-weight="700" fill="#003769" text-anchor="start">Contenedores</text><text x="434" y="316.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Compose levanta</text><text x="434" y="334.9" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">los dos servicios</text><rect x="430.0" y="378" width="150" height="26" rx="13" fill="#fff" stroke="#0063b1" stroke-width="1.2"/><text x="505.0" y="396.0" font-family="Consolas,'Cascadia Mono','DejaVu Sans Mono',monospace" font-size="13.5" font-weight="400" fill="#002a52" text-anchor="middle">make compose-arriba</text><rect x="210" y="250" width="170" height="170" rx="6" fill="#eef6ff" stroke="#003769" stroke-width="1.6"/><text x="222" y="278.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="15" font-weight="700" fill="#0063b1" text-anchor="start">7</text><text x="240" y="278.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="17" font-weight="700" fill="#003769" text-anchor="start">Interfaz</text><text x="224" y="316.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Web en el puerto 8090,</text><text x="224" y="334.9" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">cabecera con tu repo</text><rect x="220.0" y="378" width="150" height="26" rx="13" fill="#fff" stroke="#0063b1" stroke-width="1.2"/><text x="295.0" y="396.0" font-family="Consolas,'Cascadia Mono','DejaVu Sans Mono',monospace" font-size="13.5" font-weight="400" fill="#002a52" text-anchor="middle">puerto 8090</text><rect x="0" y="250" width="170" height="170" rx="6" fill="#eef6ff" stroke="#003769" stroke-width="1.6"/><text x="12" y="278.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="15" font-weight="700" fill="#0063b1" text-anchor="start">8</text><text x="30" y="278.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="17" font-weight="700" fill="#003769" text-anchor="start">Uso</text><text x="14" y="316.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Consultas de lotes,</text><text x="14" y="334.9" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">vídeo y parada</text><rect x="10.0" y="378" width="150" height="26" rx="13" fill="#fff" stroke="#0063b1" stroke-width="1.2"/><text x="85.0" y="396.0" font-family="Consolas,'Cascadia Mono','DejaVu Sans Mono',monospace" font-size="13.5" font-weight="400" fill="#002a52" text-anchor="middle">make compose-abajo</text><line x1="173" y1="95" x2="206" y2="95" stroke="#0063b1" stroke-width="2.2" marker-end="url(#fl-s3)"/><line x1="383" y1="95" x2="416" y2="95" stroke="#0063b1" stroke-width="2.2" marker-end="url(#fl-s3)"/><line x1="593" y1="95" x2="626" y2="95" stroke="#0063b1" stroke-width="2.2" marker-end="url(#fl-s3)"/><line x1="715" y1="183" x2="715" y2="246" stroke="#0063b1" stroke-width="2.2" marker-end="url(#fl-s3)"/><line x1="207" y1="335" x2="174" y2="335" stroke="#0063b1" stroke-width="2.2" marker-end="url(#fl-s3)"/><line x1="417" y1="335" x2="384" y2="335" stroke="#0063b1" stroke-width="2.2" marker-end="url(#fl-s3)"/><line x1="627" y1="335" x2="594" y2="335" stroke="#0063b1" stroke-width="2.2" marker-end="url(#fl-s3)"/><line x1="85" y1="423" x2="85" y2="468" stroke="#0063b1" stroke-width="2.2" marker-end="url(#fl-s3)"/><rect x="0" y="472" width="800" height="118" rx="6" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.4"/><text x="16" y="500.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="16" font-weight="700" fill="#003769" text-anchor="start">En paralelo, en GitHub Actions (CI/CD)</text><text x="16" y="524.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Comprueba el recorrido entero y publica versiones nuevas del modelo.</text><rect x="35.0" y="544" width="150" height="26" rx="13" fill="#fff" stroke="#0063b1" stroke-width="1.2"/><text x="110" y="562.0" font-family="Consolas,'Cascadia Mono','DejaVu Sans Mono',monospace" font-size="13.5" font-weight="400" fill="#002a52" text-anchor="middle">Validar</text><rect x="205.0" y="544" width="250" height="26" rx="13" fill="#fff" stroke="#0063b1" stroke-width="1.2"/><text x="330" y="562.0" font-family="Consolas,'Cascadia Mono','DejaVu Sans Mono',monospace" font-size="13.5" font-weight="400" fill="#002a52" text-anchor="middle">Nueva version del modelo</text><text x="480" y="563.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14" font-weight="400" fill="#636975" text-anchor="start">Pasos 17 a 22 de la guía</text></svg></div><div class="sidet"><p class="kick">El recorrido</p><h1>De punta a punta</h1><ul class="list "><li><span>Ocho cajas y <b>una orden en cada una</b>.</span></li><li><span>Todo en el Codespace, salvo abrir la interfaz y grabar el vídeo.</span></li><li><span>En paralelo, <b>GitHub Actions</b> comprueba el recorrido y publica versiones nuevas.</span></li></ul><p class="small" style="margin-top:16px">Los pasos 17 a 22 de la guía son los de GitHub Actions.</p></div></div>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">4 / 17</span></div>
+</section>
+
+<section class="slide" data-part="B" data-min="2" data-title="Paso a paso: preparar el entorno"
+ data-notes="Los pasos 1 a 4 se hacen en el navegador: fork, renombrar, crear el Codespace y aceptar los avisos de la primera vez. El Codespace tarda unos cuatro minutos y medio en prepararse. La primera orden en la terminal es make verificar: comprueba Python, los paquetes con su versión exacta, el código, la huella de los datos y Docker. Si no dice LISTO PARA EL TALLER no se sigue. make ayuda solo lista las órdenes.">
+<p class="kick">El despliegue · pasos 1 a 6</p><h1>Preparar el entorno</h1>
+
+<div class="grid2" style="grid-template-columns:1.1fr 1fr">
+ <div class="col">
+  <ul class="list "><li><span><b>Fork</b> de la plantilla y nombre exacto <span class="mono">taller-ml-ia-dev-production</span>.</span></li><li><span><b>Code, Codespaces, Create codespace on main</b>: unos 4,5 min.</span></li><li><span>Cuando pregunte si confías en los autores, <b>confía en la carpeta</b>.</span></li><li><span>La verificación debe acabar en <b>«LISTO PARA EL TALLER»</b>.</span></li></ul>
+ </div>
+ <div class="col">
+  <div class="term"><div class="bar"><i></i><i></i><i></i><em>Terminal del Codespace</em><button class="cp cpall" data-t="make verificar
+make ayuda">Copiar todo</button></div><div class="tls"><div class="tln"><span class="ps">$</span> <code>make verificar</code><button class="cp" data-t="make verificar" title="Copiar" aria-label="Copiar la orden">⧉</button></div><div class="tln"><span class="ps">$</span> <code>make ayuda</code><button class="cp" data-t="make ayuda" title="Copiar" aria-label="Copiar la orden">⧉</button></div></div></div>
+  <p class="small">Cinco marcas <span class="mono">[OK   ]</span>: Python, paquetes, <span class="mono">cafe_mlops</span>, datos y Docker.</p>
+ </div>
+</div>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">5 / 17</span></div>
+</section>
+
+<section class="slide" data-part="B" data-min="2" data-title="Paso a paso: pipelines y modelo"
+ data-notes="make pipeline ejecuta los cuatro pipelines y el entrenamiento: unos 49 segundos en el Codespace real. Lo que hay que reconocer en la salida es la huella c83699881a8880b9, el mejor modelo gradient_boosting y la versión 1 en MLflow. Al repetirlo, cada pipeline calcula la huella de su entrada y, si no cambió, no hace nada: eso es idempotencia. make comparar demuestra que el paquete, el joblib y los dos formatos de MLflow dan la misma probabilidad.">
+<p class="kick">El despliegue · pasos 7 a 9</p><h1>Pipelines y modelo</h1>
+
+<div class="grid2" style="grid-template-columns:1.1fr 1fr">
+ <div class="col">
+  <div class="term"><div class="bar"><i></i><i></i><i></i><em>Terminal del Codespace</em><button class="cp cpall" data-t="time make pipeline
+make pipeline
+make comparar">Copiar todo</button></div><div class="tls"><div class="tln"><span class="ps">$</span> <code>time make pipeline</code><button class="cp" data-t="time make pipeline" title="Copiar" aria-label="Copiar la orden">⧉</button></div><div class="tln"><span class="ps">$</span> <code>make pipeline</code><button class="cp" data-t="make pipeline" title="Copiar" aria-label="Copiar la orden">⧉</button></div><div class="tln"><span class="ps">$</span> <code>make comparar</code><button class="cp" data-t="make comparar" title="Copiar" aria-label="Copiar la orden">⧉</button></div></div></div>
+ </div>
+ <div class="col">
+  <ul class="list "><li><span>La primera vez tarda <b>49 s</b>. Mejor modelo: <span class="mono">gradient_boosting</span>, <b>versión 1</b>.</span></li><li><span>Huella de los datos: <span class="mono">c83699881a8880b9</span>.</span></li><li><span>La segunda vez, cuatro líneas <b>«sin cambios»</b>.</span></li><li><span><span class="mono">make comparar</span>: cuatro caminos y los cuatro <b>«coincide»</b>.</span></li></ul>
+ </div>
+</div>
+<p class="small" style="margin-top:18px">No pegues <span class="mono">make pipeline HASTA=2018</span> todavía: eso cambia la versión de los datos y es el paso 16.</p>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">6 / 17</span></div>
+</section>
+
+<section class="slide" data-part="B" data-min="2" data-title="Paso a paso: imágenes y contenedores"
+ data-notes="make imagenes construye dos imágenes, la de la API con el modelo dentro y la de la interfaz, que es unas cuatro veces más pequeña porque no lleva scikit-learn. Los tiempos son de un Codespace real con la caché vacía, y los tamaños son los medidos en GitHub Actions. make compose-arriba espera a que los dos contenedores estén sanos. Después se abre la interfaz y se graba el vídeo; al terminar, make compose-abajo.">
+<p class="kick">El despliegue · pasos 11 a 15</p><h1>Imágenes y contenedores</h1>
+
+<div class="grid2" style="grid-template-columns:1.2fr 1fr">
+ <div class="col">
+  <div class="term"><div class="bar"><i></i><i></i><i></i><em>Terminal del Codespace</em><button class="cp cpall" data-t="time make imagenes
+docker image ls &#x27;cafe-*&#x27;
+time make compose-arriba
+docker compose -f deploy/docker/compose.yaml ps
+make compose-abajo">Copiar todo</button></div><div class="tls"><div class="tln"><span class="ps">$</span> <code>time make imagenes</code><button class="cp" data-t="time make imagenes" title="Copiar" aria-label="Copiar la orden">⧉</button></div><div class="tln"><span class="ps">$</span> <code>docker image ls &#x27;cafe-*&#x27;</code><button class="cp" data-t="docker image ls &#x27;cafe-*&#x27;" title="Copiar" aria-label="Copiar la orden">⧉</button></div><div class="tln"><span class="ps">$</span> <code>time make compose-arriba</code><button class="cp" data-t="time make compose-arriba" title="Copiar" aria-label="Copiar la orden">⧉</button></div><div class="tln"><span class="ps">$</span> <code>docker compose -f deploy/docker/compose.yaml ps</code><button class="cp" data-t="docker compose -f deploy/docker/compose.yaml ps" title="Copiar" aria-label="Copiar la orden">⧉</button></div><div class="tln c"># al terminar el vídeo:</div><div class="tln"><span class="ps">$</span> <code>make compose-abajo</code><button class="cp" data-t="make compose-abajo" title="Copiar" aria-label="Copiar la orden">⧉</button></div></div></div>
+ </div>
+ <div class="col">
+  <table class="tbl"><tr><th>Qué</th><th>Cifra</th></tr>
+   <tr><td>Construir las imágenes</td><td>1 min 18 s</td></tr>
+   <tr><td>Levantar los contenedores</td><td>13 s</td></tr>
+   <tr><td><span class="mono">cafe-api</span></td><td>826 MB</td></tr>
+   <tr><td><span class="mono">cafe-interfaz</span></td><td>213 MB</td></tr></table>
+  <p class="small">Debes ver los dos contenedores <b>Healthy</b>. Las comillas de <span class="mono">'cafe-*'</span> son necesarias: con dos argumentos, Docker 29 da error.</p>
+ </div>
+</div>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">7 / 17</span></div>
+</section>
+
+<section class="slide" data-part="B" data-min="1" data-title="Las dos piezas en Docker"
+ data-notes="Son dos contenedores en una red interna de Compose. Desde fuera solo se llega a la interfaz, por el puerto 8090; la API escucha en el 8080 pero no se publica. Los datos se montan en solo lectura, de modo que la interfaz no podría escribir en la base aunque tuviera un fallo. Cada decisión cubre un riesgo: exponer menos, no alterar los datos, no arrancar un servicio que depende de otro que aún no responde.">
+<div class="side" style="grid-template-columns:752px 1fr"><div class="dgm"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 540" style="width:752px;height:508px" role="img" aria-label="Las dos piezas en Docker: la interfaz publica el puerto 8090 y la API queda dentro de la red interna"><title>Las dos piezas en Docker: la interfaz publica el puerto 8090 y la API queda dentro de la red interna</title><defs><marker id="fl-s7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0063b1"/></marker></defs><rect width="800" height="540" fill="#ffffff"/><rect x="0" y="175" width="150" height="90" rx="6" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.6"/><text x="75" y="208.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="16" font-weight="700" fill="#374151" text-anchor="middle">Tu navegador</text><text x="75" y="232.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="13.5" font-weight="400" fill="#636975" text-anchor="middle">pestaña Puertos</text><text x="75" y="249.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="13.5" font-weight="400" fill="#636975" text-anchor="middle">del Codespace</text><rect x="215" y="10" width="585" height="440" rx="10" fill="#ffffff" stroke="#0063b1" stroke-width="1.8" stroke-dasharray="7 5"/><text x="232" y="36.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="16" font-weight="700" fill="#003769" text-anchor="start">Red interna de Compose</text><text x="232" y="56.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="13.5" font-weight="400" fill="#636975" text-anchor="start">Los dos contenedores se ven entre ellos por su nombre.</text><rect x="235" y="100" width="240" height="200" rx="6" fill="#d8eaff" stroke="#003769" stroke-width="1.6"/><text x="355" y="130.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="18" font-weight="700" fill="#003769" text-anchor="middle">cafe-interfaz</text><text x="355" y="156.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="middle">Página web del taller.</text><text x="355" y="175.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="middle">Muestra tu repositorio,</text><text x="355" y="194.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="middle">el modelo y su huella.</text><rect x="250.0" y="226" width="210" height="26" rx="13" fill="#fff" stroke="#0063b1" stroke-width="1.2"/><text x="355" y="244.0" font-family="Consolas,'Cascadia Mono','DejaVu Sans Mono',monospace" font-size="13" font-weight="400" fill="#002a52" text-anchor="middle">puerto 8090 publicado</text><text x="355" y="280.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="13" font-weight="400" fill="#636975" text-anchor="middle">Arranca cuando la API está sana</text><rect x="555" y="100" width="225" height="200" rx="6" fill="#d8eaff" stroke="#003769" stroke-width="1.6"/><text x="667" y="130.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="18" font-weight="700" fill="#003769" text-anchor="middle">cafe-api</text><text x="667" y="156.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="middle">Sirve el modelo.</text><text x="667" y="175.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="middle">El modelo va dentro</text><text x="667" y="194.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="middle">de la imagen.</text><rect x="564.5" y="226" width="205" height="26" rx="13" fill="#fff" stroke="#0063b1" stroke-width="1.2"/><text x="667" y="244.0" font-family="Consolas,'Cascadia Mono','DejaVu Sans Mono',monospace" font-size="13" font-weight="400" fill="#002a52" text-anchor="middle">puerto 8080 sin publicar</text><text x="667" y="280.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="13" font-weight="400" fill="#636975" text-anchor="middle">Usuario 10001, no es root</text><line x1="153" y1="220" x2="233" y2="200" stroke="#0063b1" stroke-width="2.4" marker-end="url(#fl-s7)"/><text x="176" y="205.0" font-family="Consolas,'Cascadia Mono','DejaVu Sans Mono',monospace" font-size="14" font-weight="700" fill="#002a52" text-anchor="middle">8090</text><line x1="477" y1="200" x2="553" y2="200" stroke="#0063b1" stroke-width="2.4" marker-end="url(#fl-s7)"/><text x="515" y="188.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="12.5" font-weight="400" fill="#636975" text-anchor="middle">API</text><rect x="250" y="350" width="210" height="70" rx="6" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.6"/><text x="355" y="378.0" font-family="Consolas,'Cascadia Mono','DejaVu Sans Mono',monospace" font-size="15" font-weight="700" fill="#374151" text-anchor="middle">data/processed</text><text x="355" y="402.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="13.5" font-weight="400" fill="#636975" text-anchor="middle">cafe.db (los datos)</text><line x1="355" y1="348" x2="355" y2="303" stroke="#6b7280" stroke-width="2.2" marker-end="url(#fl-s7)"/><text x="366" y="330.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="13" font-weight="400" fill="#374151" text-anchor="start">montado en solo lectura (:ro)</text><rect x="0" y="470" width="800" height="60" rx="6" fill="#f3f4f6" stroke="#e5e7eb" stroke-width="1"/><text x="16" y="495.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Desde fuera solo se llega a la interfaz. La API no se publica: la interfaz la llama dentro de la red,</text><text x="16" y="515.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">en http://api:8080. Los datos no van en la imagen: se montan en solo lectura.</text></svg></div><div class="sidet"><p class="kick">Las dos piezas en Docker</p><h1>Solo se ve la interfaz</h1><ul class="list "><li><span>La <b>interfaz</b> publica el puerto 8090.</span></li><li><span>La <b>API</b> no se publica: la llama la interfaz dentro de la red de Compose.</span></li><li><span>Los datos <b>no van en la imagen</b>: se montan en solo lectura (<span class="mono">:ro</span>).</span></li><li><span>La interfaz arranca cuando la API está sana.</span></li></ul></div></div>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">8 / 17</span></div>
+</section>
+
+<section class="slide" data-part="B" data-min="2" data-title="Qué debes ver en la interfaz"
+ data-notes="Para abrir la interfaz: pestaña Puertos del Codespace, puerto 8090 y el icono del globo. Abra la captura de la izquierda a tamaño completo y lea la cabecera: repositorio, modelo con su versión y su huella, estado de la API y lotes en la base. A la derecha, el resultado de la consulta de ejemplo: cinco de seis lotes con predicción, cuatro en el tramo alta y uno en el baja; el 99999 no existe y se dice. Que haya avisos es correcto: la interfaz no esconde la incertidumbre. Los puertos son privados por defecto: abra la interfaz en el mismo navegador donde tiene la sesión de GitHub.">
+<p class="kick">El despliegue · pasos 13 y 14</p><h1>Qué debes ver en la interfaz</h1>
+
+<div class="grid2" style="gap:24px">
+ <div class="capcol"><a class="capa" href="img/cs-taller-09.webp" target="_blank" rel="noopener" title="Ver a tamaño completo"><img class="capimg" src="img/cs-taller-09.webp" alt="La interfaz con su cabecera: repositorio, modelo y huella, API lista y lotes en la base"></a>
+  <p class="small"><b>Cabecera:</b> tu repositorio, <span class="mono">gradient_boosting v1</span>, huella <span class="mono">c83699881a8880b9</span>, API lista y 1190 lotes.</p></div>
+ <div class="capcol"><a class="capa" href="img/cs-taller-10.webp" target="_blank" rel="noopener" title="Ver a tamaño completo"><img class="capimg" src="img/cs-taller-10.webp" alt="Resultado de consultar los lotes de ejemplo: tramos, probabilidades y avisos"></a>
+  <p class="small"><b>Consulta de ejemplo:</b> 5 de 6 lotes con predicción (4 en tramo alta, 1 en baja) y el 99999 sin predicción. Los avisos son correctos.</p></div>
+</div>
+<p class="small" style="margin-top:8px">Pestaña Puertos, fila del 8090, icono del globo. Capturas de ejemplo del repositorio de prueba: en las tuyas aparecen tu usuario y tu repositorio.</p>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">9 / 17</span></div>
+</section>
+
+<section class="slide" data-part="C" data-min="2" data-title="CI/CD con las dos puertas"
+ data-notes="Hay dos workflows. Validar se ejecuta en cada push, en cada pull request y a mano; repite las pruebas, el pipeline, las imágenes y los contenedores sin tu equipo, y no publica nada. Nueva version del modelo se lanza a mano y tiene dos puertas: la primera es automática y compara con la referencia; la segunda es humana y es la aprobación del environment produccion. En un fork, GitHub deja desactivadas tres cosas y las activa cada alumno: las Actions, el environment con su revisor y el permiso para que el workflow abra pull requests.">
+<div class="side" style="grid-template-columns:686px 1fr"><div class="dgm"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 700" style="width:686px;height:600px" role="img" aria-label="CI/CD en GitHub Actions: Validar, y Nueva version del modelo con dos puertas y dos resultados posibles"><title>CI/CD en GitHub Actions: Validar, y Nueva version del modelo con dos puertas y dos resultados posibles</title><defs><marker id="fl-s9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0063b1"/></marker></defs><rect width="800" height="700" fill="#ffffff"/><rect x="0" y="0" width="800" height="92" rx="6" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.4"/><text x="16" y="28.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="17" font-weight="700" fill="#003769" text-anchor="start">Validar</text><text x="100" y="28.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#636975" text-anchor="start">se ejecuta en cada push, en cada pull request y a mano</text><text x="16" y="54.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Pasa las pruebas, repite el pipeline, construye las dos imágenes y levanta los contenedores.</text><text x="16" y="76.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">No publica nada. Resultado esperado: en verde.</text><text x="0" y="128.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="17" font-weight="700" fill="#003769" text-anchor="start">Nueva version del modelo</text><text x="232" y="128.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#636975" text-anchor="start">se lanza a mano con hasta = 2018</text><rect x="0" y="146" width="400" height="66" rx="6" fill="#eef6ff" stroke="#003769" stroke-width="1.6"/><text x="14" y="171.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="15.5" font-weight="700" fill="#003769" text-anchor="start">1. Reentrenar</text><text x="14" y="193.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Con los lotes nuevos, hasta el año 2018.</text><line x1="200" y1="214" x2="200" y2="238" stroke="#0063b1" stroke-width="2.2" marker-end="url(#fl-s9)"/><rect x="0" y="240" width="400" height="100" rx="6" fill="#d8eaff" stroke="#002a52" stroke-width="2.6"/><text x="14" y="265.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="15.5" font-weight="700" fill="#003769" text-anchor="start">Puerta 1: comparación con la referencia</text><text x="14" y="287.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">El AUC en la ventana común no puede</text><text x="14" y="305.5" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">empeorar más que la tolerancia</text><text x="14" y="324.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">(0,02 por defecto).</text><line x1="200" y1="342" x2="200" y2="366" stroke="#0063b1" stroke-width="2.2" marker-end="url(#fl-s9)"/><rect x="0" y="368" width="400" height="66" rx="6" fill="#eef6ff" stroke="#003769" stroke-width="1.6"/><text x="14" y="393.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="15.5" font-weight="700" fill="#003769" text-anchor="start">2. Construir y probar</text><text x="14" y="415.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Las dos imágenes y los contenedores.</text><line x1="200" y1="436" x2="200" y2="460" stroke="#0063b1" stroke-width="2.2" marker-end="url(#fl-s9)"/><rect x="0" y="462" width="400" height="84" rx="6" fill="#d8eaff" stroke="#002a52" stroke-width="2.6"/><text x="14" y="487.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="15.5" font-weight="700" fill="#003769" text-anchor="start">Puerta 2: aprobación manual</text><text x="14" y="509.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Alguien aprueba el environment</text><text x="14" y="527.5" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">produccion antes de publicar.</text><line x1="200" y1="548" x2="200" y2="572" stroke="#0063b1" stroke-width="2.2" marker-end="url(#fl-s9)"/><rect x="0" y="574" width="400" height="110" rx="6" fill="#eef6ff" stroke="#003769" stroke-width="1.6"/><text x="14" y="599.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="15.5" font-weight="700" fill="#003769" text-anchor="start">3. Publicar y proponer</text><text x="14" y="621.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Sube cafe-api y cafe-interfaz con la</text><text x="14" y="639.5" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">etiqueta v2-... y abre un pull request</text><text x="14" y="658.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">con la nueva referencia.</text><line x1="404" y1="290" x2="468" y2="290" stroke="#6b7280" stroke-width="2.2" marker-end="url(#fl-s9)"/><text x="436" y="278.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="12.5" font-weight="400" fill="#636975" text-anchor="middle">empeora</text><rect x="472" y="240" width="328" height="100" rx="6" fill="#f3f4f6" stroke="#6b7280" stroke-width="2"/><text x="488" y="266.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="17" font-weight="700" fill="#374151" text-anchor="start">Rechazada</text><text x="488" y="289.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">Se detiene aquí. No se construye</text><text x="488" y="307.5" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#1a1a1a" text-anchor="start">ni se publica nada.</text><text x="488" y="328.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="12.5" font-weight="400" fill="#636975" text-anchor="start">Con la tolerancia por defecto: 0,7951 frente a 0,8525.</text><line x1="404" y1="606" x2="468" y2="606" stroke="#003769" stroke-width="2.4" marker-end="url(#fl-s9)"/><rect x="472" y="574" width="328" height="110" rx="6" fill="#003769" stroke="#003769" stroke-width="1.6"/><text x="488" y="602.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="start">Aprobada</text><text x="488" y="626.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#ffffff" text-anchor="start">Con tolerancia = 0.10 la versión 2</text><text x="488" y="644.5" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#ffffff" text-anchor="start">pasa la puerta 1; tú apruebas la</text><text x="488" y="663.0" font-family="'Segoe UI','Liberation Sans',Arial,sans-serif" font-size="14.5" font-weight="400" fill="#ffffff" text-anchor="start">puerta 2 y se publica.</text></svg></div><div class="sidet"><p class="kick">CI/CD en GitHub Actions</p><h1>Dos workflows, dos puertas</h1><ul class="list "><li><span><b>Validar</b>: repite todo el recorrido en un entorno limpio. En verde en unos 7 min 42 s.</span></li><li><span><b>Puerta 1</b>: compara el modelo nuevo con la referencia.</span></li><li><span><b>Puerta 2</b>: tú apruebas el environment <span class="mono">produccion</span>.</span></li></ul><div class="card gris" style="margin-top:14px"><h3>En tu fork lo activas tú</h3><ul class="list chica"><li><span>Las <b>Actions</b> (paso 17)</span></li><li><span>El environment <span class="mono">produccion</span> con tu usuario como revisor (paso 19)</span></li><li><span>La casilla «Allow GitHub Actions to create and approve pull requests» (paso 19)</span></li></ul></div></div></div>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">10 / 17</span></div>
+</section>
+
+<section class="slide" data-part="C" data-min="3" data-title="Rechazada con 0,02 y aprobada con 0,10"
+ data-notes="Es la pregunta clave de comprensión. Con la tolerancia por defecto, 0,02, la versión 2 se rechaza: su AUC en la ventana común es 0,7951 frente a 0,8525 de la referencia, una diferencia de menos 0,0574. Con tolerancia 0,10 la misma versión se aprueba. Lo importante no es el número sino el motivo: la ventana común, el año 2016, solo tiene cinco lotes sin especialidad, el AUC oscila mucho con tan pocos casos y el intervalo del 95 por ciento va de 0,49 a 1,00 en la versión 2. Subir la tolerancia es una decisión de arquitecto que se justifica y el alumno debe saber explicarla. Cubre dos riesgos a la vez: desplegar un modelo peor y bloquear una mejora real por ruido de medida. Las órdenes del recuadro son el paso 16, opcional, y reproducen en el Codespace lo que hará GitHub Actions.">
+<p class="kick">CI/CD · pasos 16, 20 y 21</p><h1>Rechazada con 0,02, aprobada con 0,10</h1>
+
+<div class="grid2" style="grid-template-columns:1.1fr 1fr">
+ <div class="col">
+  <div class="card gris"><h3>Tolerancia por defecto: 0,02</h3><p class="cifra">RECHAZADA</p><ul class="list chica"><li><span>AUC en la ventana común: <b>0,7951</b> frente a <b>0,8525</b> (diferencia -0,0574).</span></li><li><span>Termina en rojo <b>a propósito</b>, en 1 min 34 s.</span></li><li><span>No se construye ni se publica nada.</span></li></ul></div>
+  <div class="card pri"><h3>Con <span class="mono">tolerancia</span> = 0.10</h3><p class="cifra">APROBADA</p><ul class="list chica"><li><span>La misma versión pasa la puerta 1.</span></li><li><span>Esperas y <b>apruebas <span class="mono">produccion</span></b>; se publica <span class="mono">v2-...</span> y se abre un pull request.</span></li><li><span>Dura 4 min 30 s, más lo que tardes en aprobar.</span></li></ul></div>
+ </div>
+ <div class="col">
+  <div class="callout"><b>Decisión de arquitecto.</b> La ventana común solo tiene 5 lotes sin especialidad: con tan pocos casos el AUC oscila por azar (intervalo del 95 %, de 0,49 a 1,00). Subir la tolerancia lo justificas tú; no sale de una medición.</div>
+  <div class="term"><div class="bar"><i></i><i></i><i></i><em>Para probarlo en el Codespace (opcional)</em><button class="cp cpall" data-t="make pipeline HASTA=2018
+make comparar
+python -m cafe_mlops.modeling.comparar --tolerancia-referencia 0.10">Copiar todo</button></div><div class="tls"><div class="tln"><span class="ps">$</span> <code>make pipeline HASTA=2018</code><button class="cp" data-t="make pipeline HASTA=2018" title="Copiar" aria-label="Copiar la orden">⧉</button></div><div class="tln"><span class="ps">$</span> <code>make comparar</code><button class="cp" data-t="make comparar" title="Copiar" aria-label="Copiar la orden">⧉</button></div><div class="tln"><span class="ps">$</span> <code>python -m cafe_mlops.modeling.comparar --tolerancia-referencia 0.10</code><button class="cp" data-t="python -m cafe_mlops.modeling.comparar --tolerancia-referencia 0.10" title="Copiar" aria-label="Copiar la orden">⧉</button></div></div></div>
+ </div>
+</div>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">11 / 17</span></div>
+</section>
+
+<section class="slide" data-part="D" data-min="2" data-title="Qué entregar"
+ data-notes="Hay cuatro cosas que entregar: el vídeo, las dieciséis capturas, la plantilla de evidencias rellena y el fork público con el nombre exacto. El instructor identifica a cada alumno por el nombre del repositorio y por su enlace. Las capturas y el vídeo son del alumno, con su usuario visible: no sirven las de ejemplo de la guía. Si algo no funcionó, se dice y se adjunta la captura del error: vale más que una captura retocada. Un MP4 grande se sube mejor por la terminal que por el botón de subir archivos.">
+<p class="kick">La entrega</p><h1>Qué entregas</h1>
+
+<div class="grid3">
+ <div class="card "><h3>Un vídeo</h3><ul class="list chica"><li><span>MP4, de <b>2 a 4 minutos</b>, con tu voz y de menos de <b>50 MB</b>.</span></li><li><span>Se ve la cabecera con tu repositorio, los contenedores sanos y una consulta con sus avisos.</span></li><li><span>Explicas la arquitectura con tus palabras.</span></li></ul><p class="small" style="margin-top:8px"><span class="mono">evidencias/video/servicio-en-produccion.mp4</span></p></div>
+ <div class="card "><h3>16 capturas y la plantilla</h3><ul class="list chica"><li><span>Las 16 capturas, con su nombre, en <span class="mono">evidencias/capturas/</span>.</span></li><li><span>La plantilla de evidencias rellena: qué muestra cada captura y tu explicación de arquitectura.</span></li></ul></div>
+ <div class="card "><h3>Un fork público</h3><ul class="list chica"><li><span>Fork de la plantilla, renombrado <b>exactamente</b> <span class="mono">taller-ml-ia-dev-production</span>.</span></li><li><span>Público. No cambias el proyecto: solo añades <span class="mono">evidencias/</span>.</span></li></ul></div>
+</div>
+<div style="margin-top:18px"><div class="term"><div class="bar"><i></i><i></i><i></i><em>Terminal del Codespace · paso 23</em><button class="cp cpall" data-t="git add evidencias
+git commit -m &quot;Evidencias de la tarea&quot;
+git push">Copiar todo</button></div><div class="tls"><div class="tln"><span class="ps">$</span> <code>git add evidencias</code><button class="cp" data-t="git add evidencias" title="Copiar" aria-label="Copiar la orden">⧉</button></div><div class="tln"><span class="ps">$</span> <code>git commit -m &quot;Evidencias de la tarea&quot;</code><button class="cp" data-t="git commit -m &quot;Evidencias de la tarea&quot;" title="Copiar" aria-label="Copiar la orden">⧉</button></div><div class="tln"><span class="ps">$</span> <code>git push</code><button class="cp" data-t="git push" title="Copiar" aria-label="Copiar la orden">⧉</button></div></div></div></div>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">12 / 17</span></div>
+</section>
+
+<section class="slide" data-part="D" data-min="1" data-title="Las 16 capturas"
+ data-notes="Esta es la lista completa, con el paso de la guía donde se hace cada una. Las dos primeras son del navegador y las del 12 al 16 son de GitHub. Si una captura no puede hacerse por un fallo de GitHub o del Codespace, se documenta con la captura del error y el paso en que ocurrió, y se puntúa. Una captura retocada o inventada anula el aspecto al que pertenece.">
+<p class="kick">La entrega</p><h1>Las 16 capturas</h1>
+
+<div class="grid4"><div class="cap16"><span class="mono">01-fork-renombrado</span><small>paso 2</small></div><div class="cap16"><span class="mono">02-codespace-abierto</span><small>paso 3</small></div><div class="cap16"><span class="mono">03-verificar-entorno</span><small>paso 5</small></div><div class="cap16"><span class="mono">04-pipeline</span><small>paso 7</small></div><div class="cap16"><span class="mono">05-pipeline-sin-cambios</span><small>paso 8</small></div><div class="cap16"><span class="mono">06-modelo-version</span><small>paso 9</small></div><div class="cap16"><span class="mono">07-imagenes</span><small>paso 11</small></div><div class="cap16"><span class="mono">08-compose-sano</span><small>paso 12</small></div><div class="cap16"><span class="mono">09-puerto-8090</span><small>paso 13</small></div><div class="cap16"><span class="mono">10-ui-cabecera</span><small>paso 13</small></div><div class="cap16"><span class="mono">11-ui-resultado</span><small>paso 14</small></div><div class="cap16"><span class="mono">12-validar-verde</span><small>paso 18</small></div><div class="cap16"><span class="mono">13-environment-produccion</span><small>paso 19</small></div><div class="cap16"><span class="mono">14-nueva-version-rechazada</span><small>paso 20</small></div><div class="cap16"><span class="mono">15-nueva-version-aprobacion</span><small>paso 21</small></div><div class="cap16"><span class="mono">16-paquetes-y-pr</span><small>paso 22</small></div></div>
+<p class="small" style="margin-top:16px">En <span class="mono">evidencias/capturas/</span>. El número es el paso de la guía detallada. Son tuyas, con tu usuario visible, y el texto se lee.</p>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">13 / 17</span></div>
+</section>
+
+<section class="slide" data-part="D" data-min="2" data-title="Criterios de evaluación"
+ data-notes="Los tres pesos los fijó el instructor: ejecución y reproducibilidad cuarenta, evidencias treinta y comprensión treinta. Dentro de la comprensión hay tres cosas: la explicación de arquitectura de cada captura, la puerta de calidad explicada con las cifras y con el motivo del ruido, y al menos tres carencias para una producción real, como orquestación, seguridad de acceso, observabilidad o monitorización del modelo, cada una con su riesgo. El reparto de puntos dentro de cada criterio es una propuesta y está en el documento de criterios.">
+<p class="kick">Cómo se evalúa</p><h1>Criterios de evaluación: 40, 30, 30</h1>
+
+<div class="stack"><div style="flex:40;background:var(--pri)">40</div><div style="flex:30;background:var(--sec)">30</div><div style="flex:30;background:var(--g4)">30</div></div>
+<div class="grid3" style="margin-top:20px">
+ <div class="card "><h3>Ejecución y reproducibilidad · 40</h3><p class="small">El despliegue se hizo de verdad y se puede repetir: fork con el nombre correcto, pipelines, imágenes, contenedores, interfaz y las tres ejecuciones de CI/CD.</p></div>
+ <div class="card "><h3>Evidencias · 30</h3><p class="small">El vídeo cumple el formato y muestra el servicio por su interfaz. Las 16 capturas son tuyas, legibles y con su nombre.</p></div>
+ <div class="card "><h3>Comprensión · 30</h3><p class="small">Tus explicaciones de arquitectura: una por captura, la puerta de calidad con sus cifras y qué falta para una producción real.</p></div>
+</div>
+<p class="small" style="margin-top:18px">La comprensión no se evalúa con código, porque no hay nada que programar. Los niveles están en <span class="mono">taller/criterios-de-evaluacion.md</span>.</p>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">14 / 17</span></div>
+</section>
+
+<section class="slide" data-part="D" data-min="2" data-title="Errores típicos que ya vimos"
+ data-notes="Son los cuatro fallos que aparecieron al probar el recorrido de verdad. Primero, el diálogo de confianza: sin confiar en la carpeta la terminal no ejecuta nada. Segundo, el modo de recuperación del Codespace, que ocurrió en la primera prueba por un repositorio de apt con la clave caducada; ya está corregido en la plantilla, pero si aparece se mira el registro de creación y se reconstruye el contenedor. Tercero, con Docker 29 la orden docker image ls no admite dos argumentos: se usa una sola con comillas. Cuarto, un fork trae los workflows desactivados hasta que el dueño los habilita.">
+<p class="kick">Si algo falla</p><h1>Errores que ya vimos</h1>
+
+<div class="grid2" style="gap:16px 20px">
+ <div class="card err"><a class="capa" href="img/cs-taller-02.webp" target="_blank" rel="noopener" title="Ver a tamaño completo"><img class="capimg" src="img/cs-taller-02.webp" alt="Diálogo de confianza de la carpeta en el Codespace"></a>
+  <div><h3>¿Confía en los autores de los archivos?</h3><p class="small">Pulsa <b>Confiar en la carpeta y continuar</b>. Sin eso la terminal no ejecuta nada.</p></div></div>
+ <div class="card err"><a class="capa" href="img/cs-taller-03.webp" target="_blank" rel="noopener" title="Ver a tamaño completo"><img class="capimg" src="img/cs-taller-03.webp" alt="Aviso del modo de recuperación del Codespace"></a>
+  <div><h3>Modo de recuperación</h3><p class="small"><b>View Creation Log</b>, luego <span class="mono">Ctrl+Mayús+P</span>, «Codespaces: Rebuild Container» y unos 4 a 5 min. Si repite, borra el Codespace y crea otro.</p></div></div>
+ <div class="card err"><a class="capa" href="img/cs-taller-07.webp" target="_blank" rel="noopener" title="Ver a tamaño completo"><img class="capimg" src="img/cs-taller-07.webp" alt="Error de docker image ls con dos argumentos"></a>
+  <div><h3>Docker dice «requires at most 1 argument»</h3><p class="small">Un solo argumento, entre comillas:</p>
+  <div class="tln solo"><span class="ps">$</span> <code>docker image ls &#x27;cafe-*&#x27;</code><button class="cp" data-t="docker image ls &#x27;cafe-*&#x27;" title="Copiar" aria-label="Copiar la orden">⧉</button></div></div></div>
+ <div class="card err sin">
+  <div><h3>Los workflows de tu fork están desactivados</h3><p class="small">GitHub los desactiva en un fork. En la pestaña <b>Actions</b> pulsa «I understand my workflows, go ahead and enable them».</p></div></div>
+</div>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">15 / 17</span></div>
+</section>
+
+<section class="slide" data-part="D" data-min="1" data-title="Fecha y canal de entrega"
+ data-notes="La entrega es el lunes 30 de noviembre de 2026, durante todo el día, sin hora límite. No hay formulario: cada alumno envía el enlace de su fork por un solo canal, el chat del grupo del curso, Google Classroom o el correo del curso. Pida que abran el enlace en una ventana privada antes de enviarlo: si el repositorio es privado o el nombre no es el exacto, no se puede evaluar. Recuerde parar el Codespace al terminar.">
+<p class="kick">La entrega</p><h1>Cuándo y cómo se entrega</h1>
+
+<div class="grid2" style="grid-template-columns:1fr 1.1fr">
+ <div class="card pri fecha"><p class="kick" style="color:#cfe3f7">Fecha de entrega</p><p class="gran">Lunes 30/11/2026</p><p class="small" style="color:#e5e7eb">Durante ese día. No hay una hora límite concreta.</p></div>
+ <div class="col">
+  <div class="card "><h3>Un solo canal del curso</h3><ul class="list chica"><li><span>El chat del grupo</span></li><li><span>Google Classroom</span></li><li><span>El correo del curso</span></li></ul></div>
+  <div class="card "><h3>Qué envías</h3><p class="small">El enlace de tu fork:</p><p class="mono" style="display:inline-block;margin-top:6px">https://github.com/&lt;tu-usuario&gt;/taller-ml-ia-dev-production</p></div>
+ </div>
+</div>
+<p class="small" style="margin-top:20px">Antes de enviarlo, ábrelo en una ventana privada del navegador, sin tu sesión: si lo ves tú, lo verá también el instructor. Al terminar, para el Codespace para no gastar cuota.</p>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">16 / 17</span></div>
+</section>
+
+<section class="slide" data-part="D" data-min="1" data-title="Cierre"
+ data-notes="Cierre con tres ideas: se despliega toda la cadena sin programar, cada pieza responde a una decisión de arquitectura que hay que saber explicar, y la puerta de calidad es una decisión humana que se justifica. Recuerde dónde está la documentación y la fecha. Si alguien se atasca, que guarde la captura del error, anote el paso y consulte antes de la fecha de entrega.">
+<p class="kick">Para terminar</p><h1>Qué te llevas</h1>
+
+<div class="grid3">
+ <div class="card "><h3>1. Todo desplegado</h3><p class="small">La cadena entera, de los datos a la interfaz, funcionando en contenedores y comprobada por GitHub Actions. Sin programar.</p></div>
+ <div class="card "><h3>2. Cada pieza cubre un riesgo</h3><p class="small">Entorno, pipelines, modelo, imágenes, red y workflows existen por una decisión. Esa decisión es lo que explicas.</p></div>
+ <div class="card "><h3>3. La puerta es tuya</h3><p class="small">Un modelo nuevo no se publica si empeora, pero la tolerancia la decide una persona y la justifica.</p></div>
+</div>
+<div class="card gris" style="margin-top:22px"><h3>Dónde mirar</h3><ul class="list chica"><li><span><span class="mono">taller/guia-detallada.md</span>: cada paso, con lo que debes ver y qué hacer si falla</span></li><li><span><span class="mono">taller/instrucciones.md</span>, <span class="mono">taller/criterios-de-evaluacion.md</span> y <span class="mono">taller/checklist.md</span></span></li><li><span>Si algo no se resuelve, guarda la captura del error, anota el paso y consúltalo con el instructor antes de la fecha de entrega</span></li></ul></div>
+<div class="foot"><img src="img/escudo-untrm.svg" alt="Escudo de la UNTRM"><span class="t"><b>Tarea Curso Taller «De Modelo de ML/IA a Producción»</b></span><span>Profesor: Helí Campos R</span><span class="n">17 / 17</span></div>
+</section>
+
+</div></div>
+
+<aside id="notes" aria-label="Notas del ponente"><h3>Notas del ponente</h3><div id="notetext"></div><p class="small" id="notemin"></p></aside>
+<div id="index" aria-label="Índice"><h2>Índice</h2><div class="grid" id="idxgrid"></div></div>
+<nav id="bar" aria-label="Controles">
+  <button id="bprev" aria-label="Anterior">←</button><button id="bnext" aria-label="Siguiente">→</button>
+  <span id="count">1 / 1</span><span id="clockref" title="Minuto planificado acumulado"></span>
+  <button class="part" data-p="A">La tarea</button><button class="part" data-p="B">Despliegue</button><button class="part" data-p="C">CI/CD</button><button class="part" data-p="D">Entrega</button>
+  <span class="sp"></span>
+  <a id="bhome" href="../instrucciones.md" title="Volver a las instrucciones de la tarea">⌂ Instrucciones</a><button id="bidx">Índice (O)</button><button id="bnotes">Notas (S)</button><button id="bfull">Pantalla completa (F)</button>
+</nav>
+<noscript>Estas diapositivas necesitan JavaScript. El mismo contenido está en taller/instrucciones.md y taller/guia-detallada.md.</noscript>
+
+<script>
+(function(){
+'use strict';
+const $=(s,r)=> (r||document).querySelector(s), $$=(s,r)=>[...(r||document).querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch(e){try{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove();return true}catch(e2){return false}}}
+const PARTES={"A":"La tarea","B":"Despliegue","C":"CI/CD","D":"Entrega"};
+const slides=$$('.slide'); const N=slides.length;
+let cur=0;
+const cum=[];(()=>{let t=0;slides.forEach(s=>{cum.push(t);t+=+s.dataset.min||0})})();
+const TOTAL=cum[N-1]+(+slides[N-1].dataset.min||0);
+function go(i){
+  i=Math.max(0,Math.min(N-1,i)); cur=i;
+  slides.forEach((s,k)=>{s.classList.toggle('active',k===i)});
+  chrome();
+  try{history.replaceState(null,'','#'+(i+1))}catch(e){}
+}
+function next(){ if(cur<N-1) go(cur+1) }
+function prev(){ if(cur>0) go(cur-1) }
+function chrome(){
+  const s=slides[cur];
+  $('#count').textContent=(cur+1)+' / '+N;
+  $('#clockref').textContent='min '+cum[cur]+' de '+TOTAL;
+  $('#prog').style.width=((cur+1)/N*100)+'%';
+  $$('#bar .part').forEach(b=>b.classList.toggle('on',b.dataset.p===s.dataset.part));
+  $('#notetext').innerHTML='<p>'+esc(s.dataset.notes||'')+'</p>';
+  $('#notemin').textContent='Tiempo previsto: '+(s.dataset.min||0)+' min · acumulado '+cum[cur]+' min de '+TOTAL;
+  $$('#idxgrid button').forEach((b,k)=>b.classList.toggle('cur',k===cur));
+}
+function fit(){const v=$('#viewport'); const sc=Math.min(v.clientWidth/1280,v.clientHeight/720); $('#stage').style.setProperty('--s',sc.toFixed(4))}
+addEventListener('resize',fit);
+$('#idxgrid').innerHTML=slides.map((s,i)=>`<button data-i="${i}"><small>${esc(PARTES[s.dataset.part]||'')} · ${s.dataset.min||0} min</small>${i+1}. ${esc(s.dataset.title||'')}</button>`).join('');
+$('#idxgrid').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;toggle('#index',false);go(+b.dataset.i)});
+function toggle(sel,force){$(sel).classList.toggle('on',force)}
+$('#bprev').onclick=prev; $('#bnext').onclick=next;
+$('#bidx').onclick=()=>toggle('#index'); $('#bnotes').onclick=()=>toggle('#notes');
+$('#bfull').onclick=()=>{ if(document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen() };
+$$('#bar .part').forEach(b=>b.onclick=()=>{const k=slides.findIndex(s=>s.dataset.part===b.dataset.p);go(k)});
+addEventListener('keydown',e=>{
+  const t=e.target; if(t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  const k=e.key;
+  if(k==='ArrowRight'||k==='PageDown'||(k===' '&&!/^(BUTTON|A)$/.test(t.tagName))){e.preventDefault();next()}
+  else if(k==='ArrowLeft'||k==='PageUp'){e.preventDefault();prev()}
+  else if(k==='Home'){e.preventDefault();go(0)}
+  else if(k==='End'){e.preventDefault();go(N-1)}
+  else if(k==='o'||k==='O'){toggle('#index')}
+  else if(k==='s'||k==='S'){toggle('#notes')}
+  else if(k==='f'||k==='F'){$('#bfull').click()}
+  else if(k==='Escape'){toggle('#index',false);toggle('#notes',false)}
+});
+let tx=null;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+addEventListener('touchend',e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;tx=null;if(Math.abs(dx)>60){dx<0?next():prev()}},{passive:true});
+
+/* Copiar órdenes */
+document.addEventListener('click',async e=>{const b=e.target.closest('.cp'); if(!b) return; e.stopPropagation();
+  const ok=await copyText(b.dataset.t); const t=b.textContent; b.classList.add('ok'); b.textContent=ok?'✓':'✗'; setTimeout(()=>{b.classList.remove('ok');b.textContent=t},1200)});
+
+fit();
+const h=parseInt((location.hash||'').slice(1),10);
+go(isNaN(h)?0:h-1);
+addEventListener('hashchange',()=>{const n=parseInt((location.hash||'').slice(1),10);if(!isNaN(n)&&n-1!==cur)go(n-1)});
+})();
+</script>
+</body>
+</html>

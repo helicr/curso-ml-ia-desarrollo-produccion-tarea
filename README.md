@@ -10,8 +10,10 @@ ver que funciona y poder explicar **qué decisión de arquitectura hay detrás d
 
 Guía paso a paso (dónde ejecutar, qué orden, qué debes ver, qué hacer si falla): [taller/guia-detallada.md](taller/guia-detallada.md).
 El enunciado de la tarea (qué entregas y cómo se evalúa) está en [taller/instrucciones.md](taller/instrucciones.md) y, resumido en un PDF
-con diagramas, los pasos, los criterios de evaluación y el checklist, en `taller/instrucciones-del-taller.pdf`. La guía completa, con las
-capturas de ejemplo, también está en PDF: `taller/guia-detallada.pdf`.
+con diagramas, los pasos, los criterios de evaluación y el checklist, en `taller/instrucciones-del-trabajo.pdf`. La guía completa, con las
+capturas de ejemplo, también está en PDF: `taller/guia-detallada-del-trabajo.pdf`.
+Las diapositivas de la tarea, para proyectarlas o consultarlas (se abren en el navegador): [taller/slides/index.html](taller/slides/index.html);
+en PDF: `taller/diapositivas-del-trabajo.pdf`.
 
 ![Recorrido de punta a punta, con la orden de cada paso](docs/img/diagrama-recorrido.svg)
 

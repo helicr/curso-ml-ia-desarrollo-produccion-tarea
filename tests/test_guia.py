@@ -32,8 +32,8 @@ CRITERIOS = TALLER / 'criterios-de-evaluacion.md'
 CHECKLIST = TALLER / 'checklist.md'
 VIDEO = TALLER / 'guia-grabacion-video.md'
 PLANTILLA = RAIZ / 'evidencias' / 'plantilla-evidencias.md'
-PDF = TALLER / 'instrucciones-del-taller.pdf'          # el resumen corto
-PDF_GUIA = TALLER / 'guia-detallada.pdf'
+PDF = TALLER / 'instrucciones-del-trabajo.pdf'          # el resumen corto
+PDF_GUIA = TALLER / 'guia-detallada-del-trabajo.pdf'
 PDFS = [PDF, PDF_GUIA]
 DOCUMENTOS = [GUIA, INSTRUCCIONES, BREVE, CRITERIOS, CHECKLIST, VIDEO, PLANTILLA]
 IMG = RAIZ / 'docs' / 'img'
@@ -377,7 +377,7 @@ def test_los_enlaces_internos_son_validos(ruta):
 def test_el_readme_enlaza_la_guia_y_las_instrucciones():
     readme = texto(RAIZ / 'README.md')
     assert '(taller/guia-detallada.md)' in readme and '(taller/instrucciones.md)' in readme
-    assert 'taller/instrucciones-del-taller.pdf' in readme
+    assert 'taller/instrucciones-del-trabajo.pdf' in readme
 
 
 def test_no_queda_ningun_enlace_pendiente_en_test_docs():
@@ -432,7 +432,7 @@ def test_las_instrucciones_piden_el_entregable_del_instructor():
     for fragmento in ('arquitecto', 'fork', 'taller-ml-ia-dev-production', 'MP4', '50 MB', 'con tu voz', 'a través de la interfaz',
                       'Capturas de evidencia', 'público', 'make pipeline', 'make imagenes', 'make compose-arriba', '8090',
                       '`tolerancia` = 0.10', 'hasta', 'Entrega: el lunes 30/11/2026, durante ese día',
-                      'instrucciones-del-taller.pdf', 'guia-detallada.pdf', 'criterios-de-evaluacion.md'):
+                      'instrucciones-del-trabajo.pdf', 'guia-detallada-del-trabajo.pdf', 'criterios-de-evaluacion.md'):
         assert fragmento in t, fragmento
 
 
@@ -593,7 +593,7 @@ def test_el_pdf_corto_tiene_entre_8_y_14_paginas_y_lo_esencial():
         assert normalizar(re.sub(r'[`*]', '', h2)) in plano, h2
     for fragmento in ('make verificar', 'time make pipeline', 'make compose-arriba', 'Nueva version del modelo', '16-paquetes-y-pr',
                       'servicio-en-produccion.mp4', 'Envié el enlace de mi fork por el canal del curso', ENTREGA,
-                      'guia-detallada.pdf', 'Ejecución y reproducibilidad'):
+                      'guia-detallada-del-trabajo.pdf', 'Ejecución y reproducibilidad'):
         assert normalizar(fragmento) in plano, fragmento
     assert 'Rúbrica'.lower() not in todo.lower() and 'rubrica' not in plano
 

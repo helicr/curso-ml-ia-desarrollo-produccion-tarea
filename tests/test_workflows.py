@@ -18,7 +18,8 @@ from cafe_mlops import config
 
 RAIZ = config.RAIZ
 CARPETA = RAIZ / '.github' / 'workflows'
-NOMBRES = ('validar.yml', 'nueva-version.yml')
+NOMBRES = ('validar.yml', 'nueva-version.yml', 'comprobar-entrega.yml')
+CON_DOCKER = ('validar.yml', 'nueva-version.yml')       # los que construyen imagenes y usan compose (comprobar-entrega solo lee el arbol)
 
 
 def _cargar(nombre):
@@ -69,6 +70,20 @@ def test_nueva_version_solo_se_lanza_a_mano_con_hasta_2018_por_defecto():
     hasta = doc['on']['workflow_dispatch']['inputs']['hasta']
     assert str(hasta['default']) == '2018'
     assert {str(o) for o in hasta['options']} == {str(h) for h in config.VERSIONES_DATOS}
+
+
+def test_comprobar_entrega_se_dispara_a_mano_y_en_push_a_main_y_solo_llama_al_script():
+    doc, texto = _cargar('comprobar-entrega.yml')
+    assert set(doc['on']) == {'push', 'workflow_dispatch'}
+    assert doc['on']['push']['branches'] == ['main']
+    scripts = [s for _, _, s in _scripts(doc)]
+    assert scripts == ['python taller/comprobar_entrega.py']
+    assert (RAIZ / 'taller' / 'comprobar_entrega.py').is_file()
+    # el nombre del repositorio llega por el entorno (no pegado en el script) y el resumen lo escribe el script en GITHUB_STEP_SUMMARY
+    assert doc['jobs']['comprobar']['env']['NOMBRE_REPOSITORIO'] == '${{ github.event.repository.name }}'
+    codigo = (RAIZ / 'taller' / 'comprobar_entrega.py').read_text(encoding='utf-8')
+    assert 'GITHUB_STEP_SUMMARY' in codigo and '::notice' in codigo and '::error' in codigo
+    assert 'secrets' not in texto and 'upload-artifact' not in texto
 
 
 # ------------------------------------------------------------------------------------------------------------- permisos minimos
@@ -209,6 +224,8 @@ def test_las_ordenes_que_citan_existen(workflow):
     # --hasta con valores previstos
     for valor in re.findall(r'--hasta (\d{4})\b', texto):
         assert int(valor) in config.VERSIONES_DATOS, valor
+    if nombre not in CON_DOCKER:
+        return
     # las imagenes de compose son las que construye y prueba el workflow
     compose = yaml.safe_load((RAIZ / 'deploy' / 'docker' / 'compose.yaml').read_text(encoding='utf-8'))
     for servicio in compose['services'].values():
@@ -221,6 +238,9 @@ def test_las_ordenes_que_citan_existen(workflow):
 
 def test_las_cifras_se_publican_como_anotaciones_notice(workflow):
     nombre, doc, texto = workflow
+    if nombre == 'comprobar-entrega.yml':      # las anotaciones las escribe su script (probado en test_comprobar_entrega.py)
+        texto = (RAIZ / 'taller' / 'comprobar_entrega.py').read_text(encoding='utf-8')
+        assert '::error title=' in texto
     assert '::notice title=' in texto
 
 
@@ -242,7 +262,7 @@ def test_el_python_de_los_scripts_compila(workflow):
         for cuerpo in re.findall(r"<<'FIN'[^\n]*\n(.*?)\nFIN\b", script, flags=re.S):
             compile(cuerpo, f'{nombre}:{trabajo}[{i}]', 'exec')
             bloques += 1
-    assert bloques or nombre == 'x'
+    assert bloques or nombre == 'comprobar-entrega.yml'      # este llama a un script de taller/ que se prueba aparte
 
 
 def test_los_scripts_son_validos_para_bash():

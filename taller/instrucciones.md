@@ -32,8 +32,10 @@ CSV de CQI -> base operacional -> RAW -> MASTER -> FS -> ML -> modelo (MLflow) -
   - [criterios-de-evaluacion.md](criterios-de-evaluacion.md): cómo se evalúa.
   - [checklist.md](checklist.md): lista de comprobación antes de entregar.
   - [plantilla-evidencias.md](../evidencias/plantilla-evidencias.md): dónde va cada captura y dónde explicas la arquitectura.
-  - Un resumen con diagramas, en PDF: `taller/instrucciones-del-taller.pdf` (la idea, el recorrido, los pasos, qué entregar, cómo se evalúa y el checklist).
-  - La guía completa en PDF, con las capturas de ejemplo, para consultar cada paso: `taller/guia-detallada.pdf`.
+  - Un resumen con diagramas, en PDF: `taller/instrucciones-del-trabajo.pdf` (la idea, el recorrido, los pasos, qué entregar, cómo se evalúa y el checklist).
+  - La guía completa en PDF, con las capturas de ejemplo, para consultar cada paso: `taller/guia-detallada-del-trabajo.pdf`.
+  - Las diapositivas de la tarea, para proyectarlas o consultarlas (cada orden se copia con un botón): [slides/index.html](slides/index.html),
+    y en PDF: `taller/diapositivas-del-trabajo.pdf`.
 - Un entorno listo: el Codespace de GitHub ya trae Python 3.11, Docker y `make`. No instalas nada en tu ordenador.
 
 ## 3. Qué debes hacer, en orden

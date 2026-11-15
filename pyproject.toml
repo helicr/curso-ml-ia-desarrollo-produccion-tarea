@@ -26,6 +26,6 @@ api = ["fastapi", "uvicorn", "pydantic"]
 include = ["cafe_mlops*"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "taller/slides/pruebas"]
 markers = ["lento: pruebas que ejecutan los cuadernos de punta a punta"]
 filterwarnings = ["ignore::DeprecationWarning", "ignore::FutureWarning", "ignore::UserWarning"]
